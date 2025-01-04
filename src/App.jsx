@@ -1,10 +1,9 @@
 import "./App.css";
-
+import LandingPage from "./pages/LandingPage";
 function App() {
   return (
-    <div className="text-center">
-      <h1 className="text-4xl font-bold text-blue-600">Hello, Tailwind CSS!</h1>
-      <p className="text-gray-700">Welcome to your styled React app!</p>
+    <div className="App">
+      <LandingPage />
     </div>
   );
 }
