@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const SubmissionPage = () => {
   const categories = [
@@ -41,7 +42,9 @@ const SubmissionPage = () => {
   return (
     <div className="min-h-screen bg-[#1c1e26] flex flex-col items-center justify-center">
       <header className="w-full bg-[#2a2d38] py-4 px-10">
-        <h1 className="text-2xl text-white font-bold">SDU IT PARK</h1>
+        <Link to="/">
+          <h1 className="text-2xl text-white font-bold">SDU IT PARK</h1>
+        </Link>
       </header>
       <div className="w-full max-w-md bg-[#2a2d38] p-6 rounded-lg shadow-lg mt-8">
         <h2 className="text-white text-lg font-bold text-center mb-6">

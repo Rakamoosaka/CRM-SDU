@@ -1,11 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const AdminPage = () => {
   return (
     <div className="bg-[#1c1e26] min-h-screen text-white">
       {/* Header */}
       <header className="bg-[#2a2d38] py-4 px-10 flex justify-between items-center">
-        <h1 className="text-2xl text-white font-bold">SDU IT PARK</h1>
+        <Link to="/">
+          <h1 className="text-2xl text-white font-bold">SDU IT PARK</h1>
+        </Link>
         <button className="bg-[#33ADA9] hover:bg-teal-600 text-white px-4 py-2 rounded">
           Log Out
         </button>
