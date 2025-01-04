@@ -5,7 +5,7 @@ const Login = () => {
     <div className="min-h-screen flex flex-col bg-[#1c1e26] text-white">
       {/* Navbar */}
       <header className="bg-[#2a2d38] py-4 px-10">
-        <h1 className="text-2xl font-bold">SDU IT PARK</h1>
+        <h1 className="text-2xl text-white font-bold">SDU IT PARK</h1>
       </header>
 
       {/* Login Container */}

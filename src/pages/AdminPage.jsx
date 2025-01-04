@@ -4,8 +4,8 @@ const AdminPage = () => {
   return (
     <div className="bg-[#1c1e26] min-h-screen text-white">
       {/* Header */}
-      <header className="p-4 bg-[#2a2d38] flex justify-between items-center">
-        <h1 className="text-2xl font-bold">SDU IT PARK</h1>
+      <header className="bg-[#2a2d38] py-4 px-10 flex justify-between items-center">
+        <h1 className="text-2xl text-white font-bold">SDU IT PARK</h1>
         <button className="bg-[#33ADA9] hover:bg-teal-600 text-white px-4 py-2 rounded">
           Log Out
         </button>
