@@ -109,7 +109,6 @@ const SubmissionPage = () => {
       }
 
       alert("Project proposal submitted successfully!");
-      window.location.href = "/projects"; // Redirect to project list or thank you page
     } catch (error) {
       console.error("Error submitting project proposal:", error);
       alert("Failed to submit the project proposal. Please try again.");
