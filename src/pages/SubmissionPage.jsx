@@ -1,23 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "../axios";
 
 const SubmissionPage = () => {
-  const categories = [
-    "Technology",
-    "Design",
-    "Business",
-    "Marketing",
-    "Healthcare",
-    "Education",
-    "Environment",
-    "Social",
-    "Energy",
-    "Infrastructure",
-    "Agriculture",
-    "Other",
-  ];
-
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [projectTitle, setProjectTitle] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [projectBudget, setProjectBudget] = useState("");
@@ -25,12 +12,30 @@ const SubmissionPage = () => {
   const [contactEmail, setContactEmail] = useState("");
   const [fileUpload, setFileUpload] = useState(null);
   const [projectCategory, setProjectCategory] = useState("");
-  const [senderName, setSenderName] = useState(""); // New field for sender's name
+  const [senderName, setSenderName] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/categories/");
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        alert("Failed to load categories. Please try again later.");
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate required fields
     if (
       !projectCategory ||
       !projectTitle ||
@@ -40,6 +45,34 @@ const SubmissionPage = () => {
     ) {
       alert("Please fill in all required fields.");
       return;
+    }
+
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    // Validate deadline
+    if (projectDeadline && new Date(projectDeadline) < new Date()) {
+      alert("Deadline must be a future date.");
+      return;
+    }
+
+    // Validate file (if provided)
+    if (fileUpload) {
+      const validTypes = ["application/pdf", "image/jpeg", "image/png"];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!validTypes.includes(fileUpload.type)) {
+        alert("Only PDF, JPEG, or PNG files are allowed.");
+        return;
+      }
+
+      if (fileUpload.size > maxSize) {
+        alert("File size must be less than 5MB.");
+        return;
+      }
     }
 
     setLoading(true);
@@ -53,7 +86,8 @@ const SubmissionPage = () => {
         deadline: projectDeadline,
         sender_name: senderName,
         contact_email: contactEmail,
-        category: categories.indexOf(projectCategory) + 1,
+        category:
+          categories.find((c) => c.name === projectCategory)?.id || null,
       });
 
       const projectId = projectResponse.data.id;
@@ -74,6 +108,7 @@ const SubmissionPage = () => {
       }
 
       alert("Project proposal submitted successfully!");
+      window.location.href = "/projects"; // Redirect to project list or thank you page
     } catch (error) {
       console.error("Error submitting project proposal:", error);
       alert("Failed to submit the project proposal. Please try again.");
@@ -154,13 +189,16 @@ const SubmissionPage = () => {
               value={projectCategory}
               onChange={(e) => setProjectCategory(e.target.value)}
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
+              disabled={loadingCategories}
             >
               <option value="" disabled>
-                Select a category
+                {loadingCategories
+                  ? "Loading categories..."
+                  : "Select a category"}
               </option>
               {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+                <option key={category.id} value={category.name}>
+                  {category.name}
                 </option>
               ))}
             </select>
@@ -229,7 +267,7 @@ const SubmissionPage = () => {
           <button
             type="submit"
             className="w-full py-2 bg-[#33ADA9] text-white font-bold rounded-md hover:bg-teal-600 focus:outline-none focus:ring focus:ring-[#33ADA9]"
-            disabled={loading}
+            disabled={loading || loadingCategories}
           >
             {loading ? "Submitting..." : "Submit Proposal"}
           </button>
