@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "../axios";
 
 const SubmissionPage = () => {
   const categories = [
@@ -24,19 +25,61 @@ const SubmissionPage = () => {
   const [contactEmail, setContactEmail] = useState("");
   const [fileUpload, setFileUpload] = useState(null);
   const [projectCategory, setProjectCategory] = useState("");
+  const [senderName, setSenderName] = useState(""); // New field for sender's name
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent form refresh
-    console.log("Project Title:", projectTitle);
-    console.log("Project Description:", projectDescription);
-    console.log("Project Budget:", projectBudget);
-    console.log("Deadline:", projectDeadline);
-    console.log("Contact Email:", contactEmail);
-    console.log(
-      "Attached File:",
-      fileUpload ? fileUpload.name : "No file attached"
-    );
-    console.log("Project Category:", projectCategory);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (
+      !projectCategory ||
+      !projectTitle ||
+      !projectDescription ||
+      !contactEmail ||
+      !senderName
+    ) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Step 1: Submit project data
+      const projectResponse = await axios.post("/projects/", {
+        title: projectTitle,
+        description: projectDescription,
+        budget: parseFloat(projectBudget) || null,
+        deadline: projectDeadline,
+        sender_name: senderName,
+        contact_email: contactEmail,
+        category: categories.indexOf(projectCategory) + 1,
+      });
+
+      const projectId = projectResponse.data.id;
+      console.log("Project created:", projectResponse.data);
+
+      // Step 2: Upload attachment if provided
+      if (fileUpload) {
+        const formData = new FormData();
+        formData.append("file", fileUpload);
+        formData.append("project", projectId);
+
+        const attachmentResponse = await axios.post("/attachments/", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log("Attachment uploaded:", attachmentResponse.data);
+      }
+
+      alert("Project proposal submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting project proposal:", error);
+      alert("Failed to submit the project proposal. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,6 +94,22 @@ const SubmissionPage = () => {
           Submit Your Project Proposal
         </h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label
+              htmlFor="senderName"
+              className="block text-gray-300 text-sm font-medium mb-1"
+            >
+              Your Name
+            </label>
+            <input
+              type="text"
+              id="senderName"
+              value={senderName}
+              onChange={(e) => setSenderName(e.target.value)}
+              placeholder="Enter your name"
+              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
+            />
+          </div>
           <div>
             <label
               htmlFor="projectTitle"
@@ -170,8 +229,9 @@ const SubmissionPage = () => {
           <button
             type="submit"
             className="w-full py-2 bg-[#33ADA9] text-white font-bold rounded-md hover:bg-teal-600 focus:outline-none focus:ring focus:ring-[#33ADA9]"
+            disabled={loading}
           >
-            Submit Proposal
+            {loading ? "Submitting..." : "Submit Proposal"}
           </button>
         </form>
       </div>
