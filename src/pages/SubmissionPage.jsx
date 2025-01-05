@@ -20,7 +20,8 @@ const SubmissionPage = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get("/categories/");
-        setCategories(response.data);
+        console.log("API Response:", response.data);
+        setCategories(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error("Error fetching categories:", error);
         alert("Failed to load categories. Please try again later.");
@@ -191,16 +192,26 @@ const SubmissionPage = () => {
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
               disabled={loadingCategories}
             >
+              {/* Default option */}
               <option value="" disabled>
                 {loadingCategories
                   ? "Loading categories..."
                   : "Select a category"}
               </option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.name}>
-                  {category.name}
-                </option>
-              ))}
+
+              {/* Render categories only if it's a valid array */}
+              {Array.isArray(categories) && categories.length > 0
+                ? categories.map((category) => (
+                    <option key={category.id} value={category.name}>
+                      {category.name}
+                    </option>
+                  ))
+                : // Fallback option if no categories are available
+                  !loadingCategories && (
+                    <option value="" disabled>
+                      No categories available
+                    </option>
+                  )}
             </select>
           </div>
           <div>
