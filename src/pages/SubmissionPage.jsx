@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "../axios";
+import axiosDefault from "../axiosDefault";
 
 const SubmissionPage = () => {
   const [categories, setCategories] = useState([]);
@@ -19,8 +19,7 @@ const SubmissionPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get("/categories/");
-        console.log("API Response:", response.data);
+        const response = await axiosDefault.get("/categories/");
         setCategories(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -80,7 +79,7 @@ const SubmissionPage = () => {
 
     try {
       // Step 1: Submit project data
-      const projectResponse = await axios.post("/projects/", {
+      const projectResponse = await axiosDefault.post("/projects/", {
         title: projectTitle,
         description: projectDescription,
         budget: parseFloat(projectBudget) || null,
@@ -100,11 +99,15 @@ const SubmissionPage = () => {
         formData.append("file", fileUpload);
         formData.append("project", projectId);
 
-        const attachmentResponse = await axios.post("/attachments/", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const attachmentResponse = await axiosDefault.post(
+          "/attachments/",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         console.log("Attachment uploaded:", attachmentResponse.data);
       }
 
@@ -129,6 +132,7 @@ const SubmissionPage = () => {
           Submit Your Project Proposal
         </h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
+          {/* Name */}
           <div>
             <label
               htmlFor="senderName"
@@ -145,6 +149,8 @@ const SubmissionPage = () => {
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
             />
           </div>
+
+          {/* Title */}
           <div>
             <label
               htmlFor="projectTitle"
@@ -161,6 +167,8 @@ const SubmissionPage = () => {
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
             />
           </div>
+
+          {/* Description */}
           <div>
             <label
               htmlFor="projectDescription"
@@ -177,6 +185,8 @@ const SubmissionPage = () => {
               rows="4"
             ></textarea>
           </div>
+
+          {/* Category */}
           <div>
             <label
               htmlFor="category"
@@ -191,28 +201,21 @@ const SubmissionPage = () => {
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
               disabled={loadingCategories}
             >
-              {/* Default option */}
               <option value="" disabled>
                 {loadingCategories
                   ? "Loading categories..."
                   : "Select a category"}
               </option>
-
-              {/* Render categories only if it's a valid array */}
-              {Array.isArray(categories) && categories.length > 0
-                ? categories.map((category) => (
-                    <option key={category.id} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))
-                : // Fallback option if no categories are available
-                  !loadingCategories && (
-                    <option value="" disabled>
-                      No categories available
-                    </option>
-                  )}
+              {categories.map((category) => (
+                <option key={category.id} value={category.name}>
+                  {category.name}
+                </option>
+              ))}
             </select>
           </div>
+
+          {/* Other Fields */}
+          {/* Budget */}
           <div>
             <label
               htmlFor="budget"
@@ -229,6 +232,8 @@ const SubmissionPage = () => {
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
             />
           </div>
+
+          {/* Deadline */}
           <div>
             <label
               htmlFor="deadline"
@@ -244,6 +249,8 @@ const SubmissionPage = () => {
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
             />
           </div>
+
+          {/* Email */}
           <div>
             <label
               htmlFor="email"
@@ -260,6 +267,8 @@ const SubmissionPage = () => {
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
             />
           </div>
+
+          {/* File Upload */}
           <div>
             <label
               htmlFor="fileUpload"
@@ -274,6 +283,8 @@ const SubmissionPage = () => {
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
             />
           </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full py-2 bg-[#33ADA9] text-white font-bold rounded-md hover:bg-teal-600 focus:outline-none focus:ring focus:ring-[#33ADA9]"

@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import ErrorNotFound from "./pages/ErrorNotFound";
 import AdminPage from "./pages/AdminPage";
 import SubmissionPage from "./pages/SubmissionPage";
+import ProtectedRoute from "./ProtectedRoute"; // Import ProtectedRoute
 
 const App = () => {
   const router = createBrowserRouter([
@@ -18,7 +19,11 @@ const App = () => {
     },
     {
       path: "/admin",
-      element: <AdminPage />,
+      element: (
+        <ProtectedRoute>
+          <AdminPage />
+        </ProtectedRoute>
+      ),
     },
     {
       path: "/submit",

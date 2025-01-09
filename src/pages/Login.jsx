@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import Footer from "../components/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(""); // Changed from email to username
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate(); // Hook for navigation
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://your-backend-url/token/", {
-        username: email,
-        password: password,
+      const response = await axios.post("https://crm-backend-b0bv.onrender.com/api/token/", {
+        username,
+        password,
       });
       const { access, refresh } = response.data;
 
@@ -21,10 +21,10 @@ const Login = () => {
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
 
-      // Redirect or handle successful login
-      console.log("Logged in successfully!");
+      // Redirect to /admin after login
+      navigate("/admin");
     } catch (err) {
-      setError("Invalid email or password. Please try again.");
+      setError("Invalid username or password. Please try again.");
       console.error(err);
     }
   };
@@ -41,15 +41,15 @@ const Login = () => {
         <h2 className="text-3xl font-bold mb-6 text-center">Log In</h2>
         <div className="bg-[#2a2d38] p-8 rounded-2xl shadow-lg max-w-sm w-full">
           <form className="flex flex-col" onSubmit={handleSubmit}>
-            <label htmlFor="email" className="mb-2 text-base font-semibold">
-              Email
+            <label htmlFor="username" className="mb-2 text-base font-semibold">
+              Username
             </label>
             <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Your email"
+              type="text"
+              id="username"
+              value={username} // Changed state variable
+              onChange={(e) => setUsername(e.target.value)} // Changed handler
+              placeholder="Your username"
               className="p-3 mb-4 rounded-lg bg-[#3a3f51] text-white focus:outline-none focus:ring-1 focus:ring-white opacity-50"
               required
             />
