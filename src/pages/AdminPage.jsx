@@ -41,7 +41,7 @@ const AdminPage = () => {
       const params = {
         search: activeFilters.search || undefined,
         status: activeFilters.status || undefined,
-        category: activeFilters.category ? Number(activeFilters.category) : undefined, // Ensure category is a number
+        category__name__icontains: activeFilters.category || undefined, // Pass category name for filtering
         ordering: activeFilters.ordering || undefined,
       };
 
@@ -137,7 +137,7 @@ const AdminPage = () => {
             >
               <option value="">All</option>
               {categories.map((category) => (
-                <option key={category.id} value={category.id}>
+                <option key={category.id} value={category.name}>
                   {category.name}
                 </option>
               ))}
