@@ -3,48 +3,66 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 
 const AdminPage = () => {
-
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    const confirmLogout = window.confirm("Are you sure you want to log out?");
-    if (confirmLogout) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      navigate("/login"); // Redirect to login
-    }
-  };
-
   const [projects, setProjects] = useState([]);
+  const [categories, setCategories] = useState([]); // State for categories
   const [filters, setFilters] = useState({
     search: "",
     status: "",
     category: "",
     ordering: "-created_at", // Default: Newest first
   });
+  const [activeFilters, setActiveFilters] = useState({ ...filters }); // Separate state for applied filters
 
-  // Fetch projects when filters change
+  // Handle logout
+  const handleLogout = () => {
+    const confirmLogout = window.confirm("Are you sure you want to log out?");
+    if (confirmLogout) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/login");
+    }
+  };
+
+  // Fetch categories
+  const fetchCategories = async () => {
+    try {
+      const response = await axiosInstance.get("/categories/");
+      setCategories(response.data); // Save categories to state
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
+  };
+
+  // Fetch projects using active filters
   const fetchProjects = async () => {
     try {
       const params = {
-        search: filters.search || undefined,
-        status: filters.status || undefined,
-        category: filters.category || undefined,
-        ordering: filters.ordering || undefined,
+        search: activeFilters.search || undefined,
+        status: activeFilters.status || undefined,
+        category: activeFilters.category ? Number(activeFilters.category) : undefined, // Ensure category is a number
+        ordering: activeFilters.ordering || undefined,
       };
+
+      console.log("Filters being sent to backend:", params); // Debugging output
 
       const response = await axiosInstance.get("/projects/", { params });
       setProjects(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
     }
   };
 
-  // Use useEffect to call fetchProjects whenever filters change
+  // Fetch categories on component mount
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  // Fetch projects when activeFilters change
   useEffect(() => {
     fetchProjects();
-  }, [filters]);
+  }, [activeFilters]);
 
   // Handle filter changes
   const handleFilterChange = (e) => {
@@ -53,6 +71,11 @@ const AdminPage = () => {
       ...prevFilters,
       [id]: value,
     }));
+  };
+
+  // Apply filters
+  const applyFilters = () => {
+    setActiveFilters({ ...filters }); // Update activeFilters state with current filters
   };
 
   return (
@@ -98,7 +121,7 @@ const AdminPage = () => {
             >
               <option value="">All</option>
               <option value="NEW">New</option>
-              <option value="PENDING">Pending</option>
+              <option value="REJECTED">Rejected</option>
               <option value="ACCEPTED">Accepted</option>
             </select>
           </div>
@@ -113,9 +136,11 @@ const AdminPage = () => {
               onChange={handleFilterChange}
             >
               <option value="">All</option>
-              <option value="1">Web Development</option>
-              <option value="2">Mobile Apps</option>
-              <option value="3">Data Science</option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex flex-col">
@@ -134,7 +159,7 @@ const AdminPage = () => {
           </div>
           <button
             className="bg-[#33ADA9] hover:bg-teal-600 text-white mt-6 px-4 py-2 rounded"
-            onClick={() => fetchProjects()} // Trigger re-fetch
+            onClick={applyFilters}
           >
             Apply Filters
           </button>
@@ -146,26 +171,24 @@ const AdminPage = () => {
         <div className="w-7/12 bg-[#2a2d38] p-4 rounded-lg">
           <h2 className="text-2xl font-bold mb-4">Projects</h2>
           <div className="space-y-3">
-  {projects.length > 0 ? (
-    projects.map((project) => (
-      <div key={project.id} className="bg-[#3a3f51] p-4 rounded-md">
-        <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-        <p className="text-base mb-2">
-  <span className="font-semibold">Category:</span>{" "}
-  <span className="font-normal">{project.category?.name || "N/A"}</span>
-</p>
-
-        <p className="text-base mb-2">
-  <span className="font-semibold">Status:</span> <span className="font-normal">{project.status}</span>
-</p>
-      </div>
-    ))
-  ) : (
-    <p>No projects found.</p>
-  )}
-</div>
-
-
+            {projects.length > 0 ? (
+              projects.map((project) => (
+                <div key={project.id} className="bg-[#3a3f51] p-4 rounded-md">
+                  <h3 className="text-xl font-bold mb-2">{project.title}</h3>
+                  <p className="text-base mb-2">
+                    <span className="font-semibold">Category:</span>{" "}
+                    <span className="font-normal">{project.category?.name || "N/A"}</span>
+                  </p>
+                  <p className="text-base mb-2">
+                    <span className="font-semibold">Status:</span>{" "}
+                    <span className="font-normal">{project.status}</span>
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p>No projects found.</p>
+            )}
+          </div>
         </div>
       </section>
     </div>
