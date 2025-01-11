@@ -124,78 +124,101 @@ const SubmissionPage = () => {
         </h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Input Fields */}
-          {[
-            {
-              id: "senderName",
-              label: "Your Name",
-              value: senderName,
-              onChange: setSenderName,
-              type: "text",
-              placeholder: "Enter your name",
-            },
-            {
-              id: "projectTitle",
-              label: "Project Title",
-              value: projectTitle,
-              onChange: setProjectTitle,
-              type: "text",
-              placeholder: "Enter your project title",
-            },
-            {
-              id: "projectDescription",
-              label: "Project Description",
-              value: projectDescription,
-              onChange: setProjectDescription,
-              type: "textarea",
-              placeholder: "Enter your project description",
-            },
-            {
-              id: "budget",
-              label: "Budget",
-              value: projectBudget,
-              onChange: setProjectBudget,
-              type: "number",
-              placeholder: "Enter your budget",
-            },
-            {
-              id: "deadline",
-              label: "Deadline",
-              value: projectDeadline,
-              onChange: setProjectDeadline,
-              type: "date",
-            },
-            {
-              id: "email",
-              label: "Your Email",
-              value: contactEmail,
-              onChange: setContactEmail,
-              type: "email",
-              placeholder: "Enter your email",
-            },
-          ].map(({ id, label, ...inputProps }) => (
-            <div key={id}>
-              <label
-                htmlFor={id}
-                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
-              >
-                {label}
-              </label>
-              {inputProps.type === "textarea" ? (
-                <textarea
-                  id={id}
-                  {...inputProps}
-                  rows="4"
-                  className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-                />
-              ) : (
-                <input
-                  id={id}
-                  {...inputProps}
-                  className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-                />
-              )}
-            </div>
-          ))}
+          <div>
+            <label
+              htmlFor="senderName"
+              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+            >
+              Your Name
+            </label>
+            <input
+              type="text"
+              id="senderName"
+              value={senderName}
+              onChange={(e) => setSenderName(e.target.value)}
+              placeholder="Enter your name"
+              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="projectTitle"
+              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+            >
+              Project Title
+            </label>
+            <input
+              type="text"
+              id="projectTitle"
+              value={projectTitle}
+              onChange={(e) => setProjectTitle(e.target.value)}
+              placeholder="Enter your project title"
+              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="projectDescription"
+              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+            >
+              Project Description
+            </label>
+            <textarea
+              id="projectDescription"
+              value={projectDescription}
+              onChange={(e) => setProjectDescription(e.target.value)}
+              placeholder="Enter your project description"
+              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+              rows="4"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="budget"
+              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+            >
+              Budget
+            </label>
+            <input
+              type="number"
+              id="budget"
+              value={projectBudget}
+              onChange={(e) => setProjectBudget(e.target.value)}
+              placeholder="Enter your budget"
+              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="deadline"
+              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+            >
+              Deadline
+            </label>
+            <input
+              type="date"
+              id="deadline"
+              value={projectDeadline}
+              onChange={(e) => setProjectDeadline(e.target.value)}
+              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+            >
+              Your Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={contactEmail}
+              onChange={(e) => setContactEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+            />
+          </div>
 
           {/* Category Selector */}
           <div>
