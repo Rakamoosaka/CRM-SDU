@@ -22,10 +22,10 @@ const LandingPage = () => {
         </p>
 
         {/* Buttons */}
-        <div className="flex flex-col gap-3 sm:gap-4 max-w-sm">
+        <div className="flex flex-col gap-3 sm:gap-4">
           <button
             onClick={() => navigate("/submit")}
-            className="bg-[#33ADA9] hover:bg-teal-600 text-white font-medium text-lg sm:text-xl py-2 px-6 sm:px-20 rounded-md"
+            className="bg-[#33ADA9] hover:bg-teal-600 text-white font-medium text-lg sm:text-xl py-2 px-12 sm:px-20 rounded-md"
           >
             Proceed
           </button>
