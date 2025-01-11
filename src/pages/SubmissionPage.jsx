@@ -10,7 +10,7 @@ const SubmissionPage = () => {
   const [projectBudget, setProjectBudget] = useState("");
   const [projectDeadline, setProjectDeadline] = useState("");
   const [contactEmail, setContactEmail] = useState("");
-  const [fileUpload, setFileUpload] = useState(null);
+  const [fileUploads, setFileUploads] = useState([]); // Updated to handle multiple files
   const [projectCategory, setProjectCategory] = useState("");
   const [senderName, setSenderName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -31,6 +31,15 @@ const SubmissionPage = () => {
 
     fetchCategories();
   }, []);
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files); // Convert FileList to an array
+    if (files.length + fileUploads.length > 5) {
+      alert("You can only upload up to 5 files.");
+      return;
+    }
+    setFileUploads((prev) => [...prev, ...files]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,17 +65,17 @@ const SubmissionPage = () => {
       return;
     }
 
-    if (fileUpload) {
+    for (const file of fileUploads) {
       const validTypes = ["application/pdf", "image/jpeg", "image/png"];
       const maxSize = 5 * 1024 * 1024;
 
-      if (!validTypes.includes(fileUpload.type)) {
+      if (!validTypes.includes(file.type)) {
         alert("Only PDF, JPEG, or PNG files are allowed.");
         return;
       }
 
-      if (fileUpload.size > maxSize) {
-        alert("File size must be less than 5MB.");
+      if (file.size > maxSize) {
+        alert("Each file size must be less than 5MB.");
         return;
       }
     }
@@ -87,9 +96,9 @@ const SubmissionPage = () => {
 
       const projectId = projectResponse.data.id;
 
-      if (fileUpload) {
+      for (const file of fileUploads) {
         const formData = new FormData();
-        formData.append("file", fileUpload);
+        formData.append("file", file);
         formData.append("project", projectId);
 
         await axiosDefault.post("/attachments/", formData, {
@@ -98,6 +107,7 @@ const SubmissionPage = () => {
       }
 
       alert("Project proposal submitted successfully!");
+      setFileUploads([]); // Clear files after submission
     } catch (error) {
       console.error("Error submitting project proposal:", error);
       alert("Failed to submit the project proposal. Please try again.");
@@ -254,14 +264,20 @@ const SubmissionPage = () => {
               htmlFor="fileUpload"
               className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
             >
-              Attach Files
+              Attach Files (Max 5)
             </label>
             <input
               type="file"
               id="fileUpload"
-              onChange={(e) => setFileUpload(e.target.files[0])}
+              onChange={handleFileChange}
+              multiple
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
             />
+            <ul className="mt-2 text-gray-400 text-sm">
+              {fileUploads.map((file, index) => (
+                <li key={index}>{file.name}</li>
+              ))}
+            </ul>
           </div>
 
           {/* Submit Button */}
