@@ -10,10 +10,17 @@ const SubmissionPage = () => {
   const [projectBudget, setProjectBudget] = useState("");
   const [projectDeadline, setProjectDeadline] = useState("");
   const [contactEmail, setContactEmail] = useState("");
-  const [fileUploads, setFileUploads] = useState([]); // Updated to handle multiple files
+  const [fileUploads, setFileUploads] = useState([]);
   const [projectCategory, setProjectCategory] = useState("");
   const [senderName, setSenderName] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Character limits
+  const CHAR_LIMITS = {
+    senderName: 30,
+    projectTitle: 30,
+    projectDescription: 1000,
+  };
 
   // Fetch categories
   useEffect(() => {
@@ -33,12 +40,18 @@ const SubmissionPage = () => {
   }, []);
 
   const handleFileChange = (e) => {
-    const files = Array.from(e.target.files); // Convert FileList to an array
+    const files = Array.from(e.target.files);
     if (files.length + fileUploads.length > 5) {
       alert("You can only upload up to 5 files.");
       return;
     }
     setFileUploads((prev) => [...prev, ...files]);
+  };
+
+  const removeFile = (indexToRemove) => {
+    setFileUploads((prev) =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -107,7 +120,7 @@ const SubmissionPage = () => {
       }
 
       alert("Project proposal submitted successfully!");
-      setFileUploads([]); // Clear files after submission
+      setFileUploads([]);
     } catch (error) {
       console.error("Error submitting project proposal:", error);
       alert("Failed to submit the project proposal. Please try again.");
@@ -145,7 +158,10 @@ const SubmissionPage = () => {
               type="text"
               id="senderName"
               value={senderName}
-              onChange={(e) => setSenderName(e.target.value)}
+              onChange={(e) =>
+                setSenderName(e.target.value.slice(0, CHAR_LIMITS.senderName))
+              }
+              maxLength={CHAR_LIMITS.senderName}
               placeholder="Enter your name"
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
             />
@@ -161,7 +177,12 @@ const SubmissionPage = () => {
               type="text"
               id="projectTitle"
               value={projectTitle}
-              onChange={(e) => setProjectTitle(e.target.value)}
+              onChange={(e) =>
+                setProjectTitle(
+                  e.target.value.slice(0, CHAR_LIMITS.projectTitle)
+                )
+              }
+              maxLength={CHAR_LIMITS.projectTitle}
               placeholder="Enter your project title"
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
             />
@@ -176,11 +197,20 @@ const SubmissionPage = () => {
             <textarea
               id="projectDescription"
               value={projectDescription}
-              onChange={(e) => setProjectDescription(e.target.value)}
+              onChange={(e) =>
+                setProjectDescription(
+                  e.target.value.slice(0, CHAR_LIMITS.projectDescription)
+                )
+              }
+              maxLength={CHAR_LIMITS.projectDescription}
               placeholder="Enter your project description"
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
               rows="4"
             />
+            <p className="text-gray-400 text-xs text-right">
+              {projectDescription.length}/{CHAR_LIMITS.projectDescription}{" "}
+              characters
+            </p>
           </div>
           <div>
             <label
@@ -224,7 +254,8 @@ const SubmissionPage = () => {
               type="email"
               id="email"
               value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
+              onChange={(e) => setContactEmail(e.target.value.slice(0, 35))}
+              maxLength={35}
               placeholder="Enter your email"
               className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
             />
@@ -275,7 +306,19 @@ const SubmissionPage = () => {
             />
             <ul className="mt-2 text-gray-400 text-sm">
               {fileUploads.map((file, index) => (
-                <li key={index}>{file.name}</li>
+                <li
+                  key={index}
+                  className="flex justify-between items-center border-b border-gray-600 py-1"
+                >
+                  <span>{file.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeFile(index)}
+                    className="text-red-500 hover:underline"
+                  >
+                    X
+                  </button>
+                </li>
               ))}
             </ul>
           </div>
