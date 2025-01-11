@@ -35,7 +35,6 @@ const SubmissionPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate required fields
     if (
       !projectCategory ||
       !projectTitle ||
@@ -47,22 +46,19 @@ const SubmissionPage = () => {
       return;
     }
 
-    // Validate email format
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
       alert("Please enter a valid email address.");
       return;
     }
 
-    // Validate deadline
     if (projectDeadline && new Date(projectDeadline) < new Date()) {
       alert("Deadline must be a future date.");
       return;
     }
 
-    // Validate file (if provided)
     if (fileUpload) {
       const validTypes = ["application/pdf", "image/jpeg", "image/png"];
-      const maxSize = 5 * 1024 * 1024; // 5MB
+      const maxSize = 5 * 1024 * 1024;
 
       if (!validTypes.includes(fileUpload.type)) {
         alert("Only PDF, JPEG, or PNG files are allowed.");
@@ -78,7 +74,6 @@ const SubmissionPage = () => {
     setLoading(true);
 
     try {
-      // Step 1: Submit project data
       const projectResponse = await axiosDefault.post("/projects/", {
         title: projectTitle,
         description: projectDescription,
@@ -91,24 +86,15 @@ const SubmissionPage = () => {
       });
 
       const projectId = projectResponse.data.id;
-      console.log("Project created:", projectResponse.data);
 
-      // Step 2: Upload attachment if provided
       if (fileUpload) {
         const formData = new FormData();
         formData.append("file", fileUpload);
         formData.append("project", projectId);
 
-        const attachmentResponse = await axiosDefault.post(
-          "/attachments/",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        console.log("Attachment uploaded:", attachmentResponse.data);
+        await axiosDefault.post("/attachments/", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
       }
 
       alert("Project proposal submitted successfully!");
@@ -121,76 +107,101 @@ const SubmissionPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1c1e26] flex flex-col items-center justify-center">
-      <header className="w-full bg-[#2a2d38] py-4 px-10">
+    <div className="min-h-screen bg-[#1c1e26] flex flex-col items-center px-4 py-4">
+      {/* Header */}
+      <header className="w-full bg-[#2a2d38] py-4 px-6 sm:px-10 rounded-lg">
         <Link to="/">
-          <h1 className="text-2xl text-white font-bold">SDU IT PARK</h1>
+          <h1 className="text-xl sm:text-2xl text-white font-bold">
+            SDU IT PARK
+          </h1>
         </Link>
       </header>
-      <div className="w-full max-w-md bg-[#2a2d38] p-6 rounded-lg shadow-lg mt-8">
-        <h2 className="text-white text-lg font-bold text-center mb-6">
+
+      {/* Form Container */}
+      <div className="w-full max-w-md sm:max-w-lg bg-[#2a2d38] p-6 sm:p-8 rounded-lg shadow-lg mt-8">
+        <h2 className="text-white text-lg sm:text-xl font-bold text-center mb-6">
           Submit Your Project Proposal
         </h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Name */}
-          <div>
-            <label
-              htmlFor="senderName"
-              className="block text-gray-300 text-sm font-medium mb-1"
-            >
-              Your Name
-            </label>
-            <input
-              type="text"
-              id="senderName"
-              value={senderName}
-              onChange={(e) => setSenderName(e.target.value)}
-              placeholder="Enter your name"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
-            />
-          </div>
+          {/* Input Fields */}
+          {[
+            {
+              id: "senderName",
+              label: "Your Name",
+              value: senderName,
+              onChange: setSenderName,
+              type: "text",
+              placeholder: "Enter your name",
+            },
+            {
+              id: "projectTitle",
+              label: "Project Title",
+              value: projectTitle,
+              onChange: setProjectTitle,
+              type: "text",
+              placeholder: "Enter your project title",
+            },
+            {
+              id: "projectDescription",
+              label: "Project Description",
+              value: projectDescription,
+              onChange: setProjectDescription,
+              type: "textarea",
+              placeholder: "Enter your project description",
+            },
+            {
+              id: "budget",
+              label: "Budget",
+              value: projectBudget,
+              onChange: setProjectBudget,
+              type: "number",
+              placeholder: "Enter your budget",
+            },
+            {
+              id: "deadline",
+              label: "Deadline",
+              value: projectDeadline,
+              onChange: setProjectDeadline,
+              type: "date",
+            },
+            {
+              id: "email",
+              label: "Your Email",
+              value: contactEmail,
+              onChange: setContactEmail,
+              type: "email",
+              placeholder: "Enter your email",
+            },
+          ].map(({ id, label, ...inputProps }) => (
+            <div key={id}>
+              <label
+                htmlFor={id}
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                {label}
+              </label>
+              {inputProps.type === "textarea" ? (
+                <textarea
+                  id={id}
+                  {...inputProps}
+                  rows="4"
+                  className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                />
+              ) : (
+                <input
+                  id={id}
+                  {...inputProps}
+                  className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                />
+              )}
+            </div>
+          ))}
 
-          {/* Title */}
-          <div>
-            <label
-              htmlFor="projectTitle"
-              className="block text-gray-300 text-sm font-medium mb-1"
-            >
-              Project Title
-            </label>
-            <input
-              type="text"
-              id="projectTitle"
-              value={projectTitle}
-              onChange={(e) => setProjectTitle(e.target.value)}
-              placeholder="Enter your project title"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label
-              htmlFor="projectDescription"
-              className="block text-gray-300 text-sm font-medium mb-1"
-            >
-              Project Description
-            </label>
-            <textarea
-              id="projectDescription"
-              value={projectDescription}
-              onChange={(e) => setProjectDescription(e.target.value)}
-              placeholder="Enter your project description"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
-              rows="4"
-            ></textarea>
-          </div>
-
-          {/* Category */}
+          {/* Category Selector */}
           <div>
             <label
               htmlFor="category"
-              className="block text-gray-300 text-sm font-medium mb-1"
+              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
             >
               Category
             </label>
@@ -198,7 +209,7 @@ const SubmissionPage = () => {
               id="category"
               value={projectCategory}
               onChange={(e) => setProjectCategory(e.target.value)}
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
+              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
               disabled={loadingCategories}
             >
               <option value="" disabled>
@@ -214,65 +225,11 @@ const SubmissionPage = () => {
             </select>
           </div>
 
-          {/* Other Fields */}
-          {/* Budget */}
-          <div>
-            <label
-              htmlFor="budget"
-              className="block text-gray-300 text-sm font-medium mb-1"
-            >
-              Budget
-            </label>
-            <input
-              type="number"
-              id="budget"
-              value={projectBudget}
-              onChange={(e) => setProjectBudget(e.target.value)}
-              placeholder="Enter your budget"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
-            />
-          </div>
-
-          {/* Deadline */}
-          <div>
-            <label
-              htmlFor="deadline"
-              className="block text-gray-300 text-sm font-medium mb-1"
-            >
-              Deadline
-            </label>
-            <input
-              type="date"
-              id="deadline"
-              value={projectDeadline}
-              onChange={(e) => setProjectDeadline(e.target.value)}
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-gray-300 text-sm font-medium mb-1"
-            >
-              Your Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
-            />
-          </div>
-
           {/* File Upload */}
           <div>
             <label
               htmlFor="fileUpload"
-              className="block text-gray-300 text-sm font-medium mb-1"
+              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
             >
               Attach Files
             </label>
@@ -280,14 +237,14 @@ const SubmissionPage = () => {
               type="file"
               id="fileUpload"
               onChange={(e) => setFileUpload(e.target.files[0])}
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-1 focus:ring-white opacity-50"
+              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
             />
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-2 bg-[#33ADA9] text-white font-bold rounded-md hover:bg-teal-600 focus:outline-none focus:ring focus:ring-[#33ADA9]"
+            className="w-full py-2 sm:py-3 bg-[#33ADA9] text-white font-bold rounded-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
             disabled={loading || loadingCategories}
           >
             {loading ? "Submitting..." : "Submit Proposal"}
