@@ -1,3 +1,4 @@
+// AdminPage.js
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
@@ -53,11 +54,13 @@ const AdminPage = () => {
     }
   };
 
+  // Updated acceptProject to include the optional comment in the request body
   const acceptProject = async () => {
     if (!selectedProject) return;
     try {
       const response = await axiosInstance.post(
-        `/projects/${selectedProject.id}/accept/`
+        `/projects/${selectedProject.id}/accept/`,
+        { comment_text: comment } // pass comment here
       );
       console.log(response.data);
       fetchProjects();
@@ -67,30 +70,19 @@ const AdminPage = () => {
     }
   };
 
+  // Updated rejectProject to include the optional comment in the request body
   const rejectProject = async () => {
     if (!selectedProject) return;
     try {
       const response = await axiosInstance.post(
-        `/projects/${selectedProject.id}/reject/`
+        `/projects/${selectedProject.id}/reject/`,
+        { comment_text: comment } // pass comment here
       );
       console.log(response.data);
       fetchProjects();
       setSelectedProject(null);
     } catch (error) {
       console.error("Failed to reject project:", error);
-    }
-  };
-
-  const postComment = async () => {
-    if (!selectedProject || !comment) return;
-    try {
-      const response = await axiosInstance.post("/comments/", {
-        project: selectedProject.id,
-        comment_text: comment,
-      });
-      console.log(response.data);
-    } catch (error) {
-      console.error("Failed to post comment:", error);
     }
   };
 
@@ -250,14 +242,8 @@ const AdminPage = () => {
         comment={comment}
         onCommentChange={setComment}
         onClose={closeModal}
-        onAccept={() => {
-          acceptProject();
-          postComment();
-        }}
-        onReject={() => {
-          rejectProject();
-          postComment();
-        }}
+        onAccept={acceptProject}
+        onReject={rejectProject}
       />
       <Footer />
     </div>
