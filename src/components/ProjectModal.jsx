@@ -20,11 +20,20 @@ const ProjectModal = ({
         >
           &times;
         </button>
+
         <h3 className="text-xl sm:text-2xl font-bold mb-4">{project.title}</h3>
-        <p className="text-sm sm:text-base mb-2">{project.description}</p>
+
+        {/* Scrollable description area, vertical scrollbar only */}
+        <div className="max-h-40 overflow-y-auto overflow-x-hidden pr-2 mb-4">
+          <p className="text-sm sm:text-base whitespace-pre-wrap break-words">
+            {project.description}
+          </p>
+        </div>
+
         <p className="text-sm sm:text-base mb-2">
           <span className="font-semibold">Status:</span> {project.status}
         </p>
+
         <p className="text-sm sm:text-base mb-2">
           <span className="font-semibold">Attachments:</span>
           {project.attachments?.length > 0 ? (
@@ -43,12 +52,14 @@ const ProjectModal = ({
             <span> None</span>
           )}
         </p>
+
         <textarea
           placeholder="Enter your comment..."
           className="w-full p-2 mt-2 bg-[#1c1e26] border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
           value={comment}
           onChange={(e) => onCommentChange(e.target.value)}
         />
+
         <div className="flex justify-end gap-4 mt-4">
           <button
             className="bg-[#33ADA9] px-4 py-2 rounded text-white hover:bg-teal-600 transition"
