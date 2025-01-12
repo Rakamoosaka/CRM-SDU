@@ -6,7 +6,7 @@ const LogsModal = ({ open, logs, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-      <div className="bg-[#2a2d38] p-4 sm:p-6 rounded-lg w-full max-w-2xl relative">
+      <div className="bg-[#2a2d38] p-4 sm:p-6 rounded-lg w-full max-w-4xl relative">
         {/* Close Button */}
         <button
           className="absolute top-2 right-2 text-white text-2xl hover:text-gray-400 transition"
@@ -24,7 +24,7 @@ const LogsModal = ({ open, logs, onClose }) => {
           - `overflow-y-auto` for vertical scrolling
           - `text-xs sm:text-sm` scales text size up on larger screens
         */}
-        <div className="max-h-80 overflow-y-auto overflow-x-auto w-full text-xs sm:text-sm">
+        <div className="max-h-96 overflow-y-auto overflow-x-auto w-full text-xs sm:text-sm">
           <table className="min-w-full table-auto border-collapse">
             <thead>
               <tr>
