@@ -79,12 +79,20 @@ const SubmissionPage = () => {
       return;
     }
 
-    for (const file of fileUploads) {
-      const validTypes = ["application/pdf", "image/jpeg", "image/png"];
-      const maxSize = 5 * 1024 * 1024;
+    // Updated allowed file types
+    const validTypes = [
+      "image/jpeg",
+      "image/png",
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+    ];
+    const maxSize = 5 * 1024 * 1024; // 5MB
 
+    for (const file of fileUploads) {
       if (!validTypes.includes(file.type)) {
-        alert("Only PDF, JPEG, or PNG files are allowed.");
+        alert("Only PDF, JPEG, PNG, DOC, DOCX, or TXT files are allowed.");
         return;
       }
 
