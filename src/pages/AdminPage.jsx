@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import ProjectCard from "../components/ProjectCard";
 import ProjectModal from "../components/ProjectModal";
+import LogsModal from "../components/LogsModal"; // <-- import the new LogsModal
 import Footer from "../components/Footer";
 
 const AdminPage = () => {
@@ -18,8 +19,14 @@ const AdminPage = () => {
     ordering: "-created_at",
   });
   const [activeFilters, setActiveFilters] = useState({ ...filters });
+
+  // Project Modal states
   const [selectedProject, setSelectedProject] = useState(null);
   const [comment, setComment] = useState("");
+
+  // Logs Modal states
+  const [logs, setLogs] = useState([]);
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
 
   const handleLogout = () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
@@ -54,15 +61,12 @@ const AdminPage = () => {
     }
   };
 
-  // Updated acceptProject to include the optional comment in the request body
   const acceptProject = async () => {
     if (!selectedProject) return;
     try {
-      const response = await axiosInstance.post(
-        `/projects/${selectedProject.id}/accept/`,
-        { comment_text: comment } // pass comment here
-      );
-      console.log(response.data);
+      await axiosInstance.post(`/projects/${selectedProject.id}/accept/`, {
+        comment_text: comment,
+      });
       fetchProjects();
       setSelectedProject(null);
     } catch (error) {
@@ -70,20 +74,33 @@ const AdminPage = () => {
     }
   };
 
-  // Updated rejectProject to include the optional comment in the request body
   const rejectProject = async () => {
     if (!selectedProject) return;
     try {
-      const response = await axiosInstance.post(
-        `/projects/${selectedProject.id}/reject/`,
-        { comment_text: comment } // pass comment here
-      );
-      console.log(response.data);
+      await axiosInstance.post(`/projects/${selectedProject.id}/reject/`, {
+        comment_text: comment,
+      });
       fetchProjects();
       setSelectedProject(null);
     } catch (error) {
       console.error("Failed to reject project:", error);
     }
+  };
+
+  // Fetch logs from /logs/ and open the LogsModal
+  const openLogsModal = async () => {
+    try {
+      const response = await axiosInstance.get("/logs/");
+      // Typically, response.data.results is your logs array
+      setLogs(response.data.results || []);
+      setIsLogsModalOpen(true);
+    } catch (error) {
+      console.error("Failed to fetch logs:", error);
+    }
+  };
+
+  const closeLogsModal = () => {
+    setIsLogsModalOpen(false);
   };
 
   useEffect(() => {
@@ -122,12 +139,20 @@ const AdminPage = () => {
         <Link to="/">
           <h1 className="text-lg sm:text-2xl font-bold">SDU IT PARK</h1>
         </Link>
-        <button
-          className="bg-[#33ADA9] hover:bg-teal-600 text-white px-3 sm:px-4 py-2 rounded"
-          onClick={handleLogout}
-        >
-          Log Out
-        </button>
+        <div className="flex gap-2">
+          <button
+            className="bg-[#33ADA9] hover:bg-teal-600 text-white px-3 sm:px-4 py-2 rounded"
+            onClick={handleLogout}
+          >
+            Log Out
+          </button>
+          <button
+            className="bg-gray-700 hover:bg-gray-600 text-white px-3 sm:px-4 py-2 rounded"
+            onClick={openLogsModal} // <-- Open logs modal
+          >
+            Logs
+          </button>
+        </div>
       </header>
 
       {/* Filters Section */}
@@ -236,7 +261,7 @@ const AdminPage = () => {
         </div>
       </section>
 
-      {/* Modal */}
+      {/* Project Modal */}
       <ProjectModal
         project={selectedProject}
         comment={comment}
@@ -245,6 +270,10 @@ const AdminPage = () => {
         onAccept={acceptProject}
         onReject={rejectProject}
       />
+
+      {/* Logs Modal */}
+      <LogsModal open={isLogsModalOpen} logs={logs} onClose={closeLogsModal} />
+
       <Footer />
     </div>
   );
