@@ -39,7 +39,7 @@ const LandingPage = () => {
       </div>
 
       {/* Footer */}
-      <Footer />
+      <Footer isLandingPage={true} />
     </div>
   );
 };

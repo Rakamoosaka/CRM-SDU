@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Footer from "../components/Footer";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -11,10 +12,13 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://crm-backend-b0bv.onrender.com/api/token/", {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        "https://crm-backend-b0bv.onrender.com/api/token/",
+        {
+          username,
+          password,
+        }
+      );
       const { access, refresh } = response.data;
 
       // Store tokens in localStorage (or secure storage)
@@ -33,16 +37,18 @@ const Login = () => {
     <div className="min-h-screen flex flex-col bg-[#1c1e26] text-white px-4 py-4">
       {/* Header */}
       <header className="w-full bg-[#2a2d38] py-4 px-6 sm:px-10 rounded-lg">
-              <Link to="/">
-                <h1 className="text-xl sm:text-2xl text-white font-bold">
-                  SDU IT PARK
-                </h1>
-              </Link>
-            </header>
+        <Link to="/">
+          <h1 className="text-xl sm:text-2xl text-white font-bold">
+            SDU IT PARK
+          </h1>
+        </Link>
+      </header>
 
       {/* Main Content */}
       <main className="flex flex-1 flex-col justify-center items-center px-4 sm:px-8 py-8">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">Log In</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
+          Log In
+        </h2>
         <div className="bg-[#2a2d38] p-6 sm:p-8 rounded-lg shadow-lg max-w-xs sm:max-w-sm w-full">
           <form className="flex flex-col" onSubmit={handleSubmit}>
             {/* Username Field */}
@@ -80,7 +86,9 @@ const Login = () => {
             />
 
             {/* Error Message */}
-            {error && <p className="text-red-500 mb-4 text-sm sm:text-base">{error}</p>}
+            {error && (
+              <p className="text-red-500 mb-4 text-sm sm:text-base">{error}</p>
+            )}
 
             {/* Submit Button */}
             <button
@@ -92,6 +100,7 @@ const Login = () => {
           </form>
         </div>
       </main>
+      <Footer isLoginPage={true} />
     </div>
   );
 };

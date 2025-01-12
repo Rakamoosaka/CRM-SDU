@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axiosDefault from "../axiosDefault";
+import Footer from "../components/Footer";
 
 const SubmissionPage = () => {
   const [categories, setCategories] = useState([]);
@@ -332,6 +333,9 @@ const SubmissionPage = () => {
             {loading ? "Submitting..." : "Submit Proposal"}
           </button>
         </form>
+      </div>
+      <div>
+        <Footer />
       </div>
     </div>
   );

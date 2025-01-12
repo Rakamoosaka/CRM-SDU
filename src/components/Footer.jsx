@@ -1,8 +1,12 @@
 import React from "react";
 
-const Footer = () => {
+const Footer = ({ isLandingPage, isLoginPage }) => {
   return (
-    <div className="absolute bottom-10 flex flex-col items-center text-gray-500 text-xs">
+    <div
+      className={`${
+        isLandingPage ? "absolute" : isLoginPage ? "mt-0" : "mt-8"
+      } bottom-10 flex flex-col items-center text-gray-500 text-xs`}
+    >
       <button className="border border-gray-500 px-4 py-1 rounded-md mb-4">
         lorem
       </button>

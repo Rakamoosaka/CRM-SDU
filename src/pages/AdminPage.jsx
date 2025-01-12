@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import ProjectCard from "../components/ProjectCard";
 import ProjectModal from "../components/ProjectModal";
+import Footer from "../components/Footer";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -258,6 +259,7 @@ const AdminPage = () => {
           postComment();
         }}
       />
+      <Footer />
     </div>
   );
 };
