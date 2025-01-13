@@ -1,25 +1,28 @@
-// LogsModal.js
 import React from "react";
 
 const LogsModal = ({ open, logs, onClose, loading, error }) => {
-  if (!open) return null; // Don't render if modal is closed
-
-  // Helper function to format an ISO date string (e.g. "2023-08-15T12:34:56Z") to "dd-mm-yyyy"
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const dateObj = new Date(dateString);
-    // Fallback if invalid date
-    if (isNaN(dateObj.getTime())) return dateString;
-
-    const dd = String(dateObj.getDate()).padStart(2, "0");
-    const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
-    const yyyy = dateObj.getFullYear();
-    return `${dd}-${mm}-${yyyy}`;
-  };
-
+  // We don't immediately return null if not open. Instead, let's always render the overlay:
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-      <div className="bg-[#2a2d38] p-4 sm:p-6 rounded-lg w-full max-w-4xl relative">
+    <div
+      className={`
+        fixed inset-0 z-50 p-4 
+        bg-black bg-opacity-50 
+        flex justify-center items-center
+        transition-opacity duration-300
+        ${
+          open
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }
+      `}
+    >
+      <div
+        className={`
+          bg-[#2a2d38] p-4 sm:p-6 rounded-lg w-full max-w-4xl relative
+          transition-transform duration-300
+          ${open ? "scale-100" : "scale-95"}
+        `}
+      >
         {/* Close Button */}
         <button
           className="absolute top-2 right-2 text-white text-2xl hover:text-gray-400 transition-colors duration-200"
@@ -57,9 +60,9 @@ const LogsModal = ({ open, logs, onClose, loading, error }) => {
                   <tr key={index} className="border-b border-gray-600">
                     <td className="p-2 break-words">{log.message}</td>
                     <td className="p-2 break-words">{log.logger_name}</td>
-                    {/* Format the date here */}
                     <td className="p-2 whitespace-nowrap">
-                      {formatDate(log.created_at)}
+                      {/* A small helper function to format the date */}
+                      {new Date(log.created_at).toLocaleDateString()}
                     </td>
                   </tr>
                 ))}
