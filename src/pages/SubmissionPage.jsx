@@ -16,6 +16,9 @@ const SubmissionPage = () => {
   const [senderName, setSenderName] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // New state variable to control success section visibility
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   // Character limits
   const CHAR_LIMITS = {
     senderName: 30,
@@ -118,6 +121,7 @@ const SubmissionPage = () => {
 
       const projectId = projectResponse.data.id;
 
+      // Upload files
       for (const file of fileUploads) {
         const formData = new FormData();
         formData.append("file", file);
@@ -128,8 +132,8 @@ const SubmissionPage = () => {
         });
       }
 
-      alert("Project proposal submitted successfully!");
-      setFileUploads([]);
+      // Once everything is successful, switch to success state
+      setIsSubmitted(true);
     } catch (error) {
       console.error("Error submitting project proposal:", error);
       alert("Failed to submit the project proposal. Please try again.");
@@ -149,199 +153,219 @@ const SubmissionPage = () => {
         </Link>
       </header>
 
-      {/* Form Container */}
-      <div className="w-full max-w-md sm:max-w-lg bg-[#2a2d38] p-6 sm:p-8 rounded-lg shadow-lg mt-8">
-        <h2 className="text-white text-lg sm:text-xl font-bold text-center mb-6">
-          Submit Your Project Proposal
-        </h2>
-        <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Input Fields */}
-          <div>
-            <label
-              htmlFor="senderName"
-              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
-            >
-              Your Name
-            </label>
-            <input
-              type="text"
-              id="senderName"
-              value={senderName}
-              onChange={(e) =>
-                setSenderName(e.target.value.slice(0, CHAR_LIMITS.senderName))
-              }
-              maxLength={CHAR_LIMITS.senderName}
-              placeholder="Enter your name"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="projectTitle"
-              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
-            >
-              Project Title
-            </label>
-            <input
-              type="text"
-              id="projectTitle"
-              value={projectTitle}
-              onChange={(e) =>
-                setProjectTitle(
-                  e.target.value.slice(0, CHAR_LIMITS.projectTitle)
-                )
-              }
-              maxLength={CHAR_LIMITS.projectTitle}
-              placeholder="Enter your project title"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="projectDescription"
-              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
-            >
-              Project Description
-            </label>
-            <textarea
-              id="projectDescription"
-              value={projectDescription}
-              onChange={(e) =>
-                setProjectDescription(
-                  e.target.value.slice(0, CHAR_LIMITS.projectDescription)
-                )
-              }
-              maxLength={CHAR_LIMITS.projectDescription}
-              placeholder="Enter your project description"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-              rows="4"
-            />
-            <p className="text-gray-400 text-xs text-right">
-              {projectDescription.length}/{CHAR_LIMITS.projectDescription}{" "}
-              characters
-            </p>
-          </div>
-          <div>
-            <label
-              htmlFor="budget"
-              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
-            >
-              Budget
-            </label>
-            <input
-              type="number"
-              id="budget"
-              value={projectBudget}
-              onChange={(e) => setProjectBudget(e.target.value)}
-              placeholder="Enter your budget"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="deadline"
-              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
-            >
-              Deadline
-            </label>
-            <input
-              type="date"
-              id="deadline"
-              value={projectDeadline}
-              onChange={(e) => setProjectDeadline(e.target.value)}
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
-            >
-              Your Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value.slice(0, 35))}
-              maxLength={35}
-              placeholder="Enter your email"
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-            />
-          </div>
+      {/* Conditionally render the form or the success message */}
+      {!isSubmitted ? (
+        // FORM SECTION
+        <div className="w-full max-w-md sm:max-w-lg bg-[#2a2d38] p-6 sm:p-8 rounded-lg shadow-lg mt-8">
+          <h2 className="text-white text-lg sm:text-xl font-bold text-center mb-6">
+            Submit Your Project Proposal
+          </h2>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            {/* Input Fields */}
+            <div>
+              <label
+                htmlFor="senderName"
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                Your Name
+              </label>
+              <input
+                type="text"
+                id="senderName"
+                value={senderName}
+                onChange={(e) =>
+                  setSenderName(e.target.value.slice(0, CHAR_LIMITS.senderName))
+                }
+                maxLength={CHAR_LIMITS.senderName}
+                placeholder="Enter your name"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="projectTitle"
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                Project Title
+              </label>
+              <input
+                type="text"
+                id="projectTitle"
+                value={projectTitle}
+                onChange={(e) =>
+                  setProjectTitle(
+                    e.target.value.slice(0, CHAR_LIMITS.projectTitle)
+                  )
+                }
+                maxLength={CHAR_LIMITS.projectTitle}
+                placeholder="Enter your project title"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="projectDescription"
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                Project Description
+              </label>
+              <textarea
+                id="projectDescription"
+                value={projectDescription}
+                onChange={(e) =>
+                  setProjectDescription(
+                    e.target.value.slice(0, CHAR_LIMITS.projectDescription)
+                  )
+                }
+                maxLength={CHAR_LIMITS.projectDescription}
+                placeholder="Enter your project description"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                rows="4"
+              />
+              <p className="text-gray-400 text-xs text-right">
+                {projectDescription.length}/{CHAR_LIMITS.projectDescription}{" "}
+                characters
+              </p>
+            </div>
+            <div>
+              <label
+                htmlFor="budget"
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                Budget
+              </label>
+              <input
+                type="number"
+                id="budget"
+                value={projectBudget}
+                onChange={(e) => setProjectBudget(e.target.value)}
+                placeholder="Enter your budget"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="deadline"
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                Deadline
+              </label>
+              <input
+                type="date"
+                id="deadline"
+                value={projectDeadline}
+                onChange={(e) => setProjectDeadline(e.target.value)}
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                Your Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={contactEmail}
+                onChange={(e) => setContactEmail(e.target.value.slice(0, 35))}
+                maxLength={35}
+                placeholder="Enter your email"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+              />
+            </div>
 
-          {/* Category Selector */}
-          <div>
-            <label
-              htmlFor="category"
-              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
-            >
-              Category
-            </label>
-            <select
-              id="category"
-              value={projectCategory}
-              onChange={(e) => setProjectCategory(e.target.value)}
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-              disabled={loadingCategories}
-            >
-              <option value="" disabled>
-                {loadingCategories
-                  ? "Loading categories..."
-                  : "Select a category"}
-              </option>
-              {categories.map((category) => (
-                <option key={category.id} value={category.name}>
-                  {category.name}
+            {/* Category Selector */}
+            <div>
+              <label
+                htmlFor="category"
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                Category
+              </label>
+              <select
+                id="category"
+                value={projectCategory}
+                onChange={(e) => setProjectCategory(e.target.value)}
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                disabled={loadingCategories}
+              >
+                <option value="" disabled>
+                  {loadingCategories
+                    ? "Loading categories..."
+                    : "Select a category"}
                 </option>
-              ))}
-            </select>
-          </div>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.name}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          {/* File Upload */}
-          <div>
-            <label
-              htmlFor="fileUpload"
-              className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
-            >
-              Attach Files (Max 5)
-            </label>
-            <input
-              type="file"
-              id="fileUpload"
-              onChange={handleFileChange}
-              multiple
-              className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
-            />
-            <ul className="mt-2 text-gray-400 text-sm">
-              {fileUploads.map((file, index) => (
-                <li
-                  key={index}
-                  className="flex justify-between items-center border-b border-gray-600 py-1"
-                >
-                  <span>{file.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeFile(index)}
-                    className="text-red-500 hover:underline"
+            {/* File Upload */}
+            <div>
+              <label
+                htmlFor="fileUpload"
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                Attach Files (Max 5)
+              </label>
+              <input
+                type="file"
+                id="fileUpload"
+                onChange={handleFileChange}
+                multiple
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+              />
+              <ul className="mt-2 text-gray-400 text-sm">
+                {fileUploads.map((file, index) => (
+                  <li
+                    key={index}
+                    className="flex justify-between items-center border-b border-gray-600 py-1"
                   >
-                    X
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
+                    <span>{file.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => removeFile(index)}
+                      className="text-red-500 hover:underline"
+                    >
+                      X
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full py-2 sm:py-3 bg-[#33ADA9] text-white font-bold rounded-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            disabled={loading || loadingCategories}
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full py-2 sm:py-3 bg-[#33ADA9] text-white font-bold rounded-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              disabled={loading || loadingCategories}
+            >
+              {loading ? "Submitting..." : "Submit Proposal"}
+            </button>
+          </form>
+        </div>
+      ) : (
+        // SUCCESS SECTION
+        <div className="w-full max-w-md sm:max-w-lg bg-[#2a2d38] p-6 sm:p-8 rounded-lg shadow-lg mt-8 flex flex-col items-center">
+          <h2 className="text-2xl text-white font-bold mb-4">
+            Thank You For Your Submission!
+          </h2>
+          <p className="text-gray-300 mb-6 text-center">
+            Check your email box for incoming letters.
+          </p>
+          <Link
+            to="/"
+            className="inline-block px-5 py-2 bg-[#33ADA9] text-white rounded-md font-semibold hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
-            {loading ? "Submitting..." : "Submit Proposal"}
-          </button>
-        </form>
-      </div>
+            Return to Home
+          </Link>
+        </div>
+      )}
+
       <div>
         <Footer />
       </div>
