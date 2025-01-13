@@ -1,9 +1,11 @@
+// ProjectCard.js
 import React from "react";
 
 const ProjectCard = ({ project, onClick }) => {
   return (
     <div
-      className="bg-[#3a3f51] p-4 rounded-md cursor-pointer hover:bg-[#2e3346] transition-all"
+      className="bg-[#3a3f51] p-4 rounded-md cursor-pointer 
+                 hover:bg-[#2e3346] transition-colors duration-200"
       onClick={() => onClick(project)} // Trigger modal open
     >
       <h3 className="text-lg sm:text-xl font-bold mb-2">{project.title}</h3>

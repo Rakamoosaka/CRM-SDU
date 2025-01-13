@@ -98,7 +98,6 @@ const SubmissionPage = () => {
         alert("Only PDF, JPEG, PNG, DOC, DOCX, or TXT files are allowed.");
         return;
       }
-
       if (file.size > maxSize) {
         alert("Each file size must be less than 5MB.");
         return;
@@ -143,9 +142,9 @@ const SubmissionPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1c1e26] flex flex-col items-center px-4 py-4">
+    <div className="min-h-screen bg-[#1c1e26] flex flex-col items-center px-4 py-6">
       {/* Header */}
-      <header className="w-full bg-[#2a2d38] py-4 px-6 sm:px-10 rounded-lg">
+      <header className="w-full bg-[#2a2d38] py-4 px-6 sm:px-10 rounded-lg shadow-md">
         <Link to="/">
           <h1 className="text-xl sm:text-2xl text-white font-bold">
             SDU IT PARK
@@ -178,7 +177,9 @@ const SubmissionPage = () => {
                 }
                 maxLength={CHAR_LIMITS.senderName}
                 placeholder="Enter your name"
-                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md 
+                           focus:outline-none focus:ring-2 focus:ring-[#33ADA9] 
+                           transition-all duration-200"
               />
             </div>
             <div>
@@ -199,7 +200,9 @@ const SubmissionPage = () => {
                 }
                 maxLength={CHAR_LIMITS.projectTitle}
                 placeholder="Enter your project title"
-                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md 
+                           focus:outline-none focus:ring-2 focus:ring-[#33ADA9] 
+                           transition-all duration-200"
               />
             </div>
             <div>
@@ -219,7 +222,9 @@ const SubmissionPage = () => {
                 }
                 maxLength={CHAR_LIMITS.projectDescription}
                 placeholder="Enter your project description"
-                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md 
+                           focus:outline-none focus:ring-2 focus:ring-[#33ADA9] 
+                           transition-all duration-200"
                 rows="4"
               />
               <p className="text-gray-400 text-xs text-right">
@@ -240,7 +245,9 @@ const SubmissionPage = () => {
                 value={projectBudget}
                 onChange={(e) => setProjectBudget(e.target.value)}
                 placeholder="Enter your budget"
-                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md
+                           focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                           transition-all duration-200"
               />
             </div>
             <div>
@@ -255,7 +262,9 @@ const SubmissionPage = () => {
                 id="deadline"
                 value={projectDeadline}
                 onChange={(e) => setProjectDeadline(e.target.value)}
-                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md 
+                           focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                           transition-all duration-200"
               />
             </div>
             <div>
@@ -272,7 +281,9 @@ const SubmissionPage = () => {
                 onChange={(e) => setContactEmail(e.target.value.slice(0, 35))}
                 maxLength={35}
                 placeholder="Enter your email"
-                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md 
+                           focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                           transition-all duration-200"
               />
             </div>
 
@@ -288,7 +299,9 @@ const SubmissionPage = () => {
                 id="category"
                 value={projectCategory}
                 onChange={(e) => setProjectCategory(e.target.value)}
-                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md 
+                           focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                           transition-all duration-200"
                 disabled={loadingCategories}
               >
                 <option value="" disabled>
@@ -317,7 +330,9 @@ const SubmissionPage = () => {
                 id="fileUpload"
                 onChange={handleFileChange}
                 multiple
-                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md 
+                           focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                           transition-all duration-200"
               />
               <ul className="mt-2 text-gray-400 text-sm">
                 {fileUploads.map((file, index) => (
@@ -341,7 +356,9 @@ const SubmissionPage = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-2 sm:py-3 bg-[#33ADA9] text-white font-bold rounded-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full py-2 sm:py-3 bg-[#33ADA9] text-white font-bold rounded-md 
+                         hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500
+                         transition-colors duration-200"
               disabled={loading || loadingCategories}
             >
               {loading ? "Submitting..." : "Submit Proposal"}
@@ -351,6 +368,21 @@ const SubmissionPage = () => {
       ) : (
         // SUCCESS SECTION
         <div className="w-full max-w-md sm:max-w-lg bg-[#2a2d38] p-6 sm:p-8 rounded-lg shadow-lg mt-8 flex flex-col items-center">
+          {/* Optionally add a checkmark icon here */}
+          {/* <svg
+            className="w-12 h-12 text-green-400 mb-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 11l3 3L22 4"
+            />
+          </svg> */}
           <h2 className="text-2xl text-white font-bold mb-4">
             Thank You For Your Submission!
           </h2>
@@ -359,7 +391,9 @@ const SubmissionPage = () => {
           </p>
           <Link
             to="/"
-            className="inline-block px-5 py-2 bg-[#33ADA9] text-white rounded-md font-semibold hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="inline-block px-5 py-2 bg-[#33ADA9] text-white rounded-md font-semibold 
+                       hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500
+                       transition-colors duration-200"
           >
             Return to Home
           </Link>

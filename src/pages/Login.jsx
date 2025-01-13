@@ -7,10 +7,14 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
     try {
       const response = await axios.post(
         "https://crm-backend-b0bv.onrender.com/api/token/",
@@ -21,22 +25,24 @@ const Login = () => {
       );
       const { access, refresh } = response.data;
 
-      // Store tokens in localStorage (or secure storage)
+      // Store tokens in localStorage
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
 
-      // Redirect to /admin after login
+      // Navigate to admin page
       navigate("/admin");
     } catch (err) {
       setError("Invalid username or password. Please try again.");
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#1c1e26] text-white px-4 py-4">
       {/* Header */}
-      <header className="w-full bg-[#2a2d38] py-4 px-6 sm:px-10 rounded-lg">
+      <header className="w-full bg-[#2a2d38] py-4 px-6 sm:px-10 rounded-lg shadow-md">
         <Link to="/">
           <h1 className="text-xl sm:text-2xl text-white font-bold">
             SDU IT PARK
@@ -64,7 +70,9 @@ const Login = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Your username"
-              className="p-3 mb-4 rounded-lg bg-[#3a3f51] text-white focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+              className="p-3 mb-4 rounded-lg bg-[#3a3f51] text-white
+                         focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                         transition-all duration-200"
               required
             />
 
@@ -81,7 +89,9 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Your password"
-              className="p-3 mb-6 rounded-lg bg-[#3a3f51] text-white focus:outline-none focus:ring-2 focus:ring-[#33ADA9]"
+              className="p-3 mb-6 rounded-lg bg-[#3a3f51] text-white
+                         focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                         transition-all duration-200"
               required
             />
 
@@ -93,9 +103,12 @@ const Login = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="p-3 sm:py-3 bg-[#33ADA9] rounded text-white font-semibold hover:bg-teal-600 transition-all"
+              disabled={isLoading}
+              className={`p-3 sm:py-3 bg-[#33ADA9] rounded text-white font-semibold 
+                          hover:bg-teal-600 transition-all duration-200
+                          ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
             >
-              Log In
+              {isLoading ? "Logging in..." : "Log In"}
             </button>
           </form>
         </div>
