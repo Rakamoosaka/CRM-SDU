@@ -7,9 +7,6 @@ const Footer = ({ isLandingPage, isLoginPage }) => {
         isLandingPage ? "absolute" : isLoginPage ? "mt-0" : "mt-8"
       } bottom-10 flex flex-col items-center text-gray-500 text-xs`}
     >
-      <button className="border border-gray-500 px-4 py-1 rounded-md mb-4">
-        lorem
-      </button>
       <div className="flex gap-4">
         <a href="#" className="hover:underline">
           Home
