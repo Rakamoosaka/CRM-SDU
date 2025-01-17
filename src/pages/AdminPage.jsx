@@ -13,7 +13,7 @@ const AdminPage = () => {
   const [projects, setProjects] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  // Loading & Error states for projects & categories
+  // Loading & Error states
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [projectsError, setProjectsError] = useState("");
   const [loadingCategories, setLoadingCategories] = useState(false);
@@ -25,7 +25,7 @@ const AdminPage = () => {
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [logsError, setLogsError] = useState("");
 
-  // ====================== FILTERS =======================
+  // Filters
   const [filters, setFilters] = useState({
     search: "",
     status: "",
@@ -43,7 +43,7 @@ const AdminPage = () => {
   // "accept" | "reject" | "start" | "complete" | null
   const [actionLoading, setActionLoading] = useState(null);
 
-  // 1)===================== LOGOUT ======================
+  // ------------------- LOGOUT -------------------
   const handleLogout = () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
     if (confirmLogout) {
@@ -53,7 +53,7 @@ const AdminPage = () => {
     }
   };
 
-  // 2)================= FETCH CATEGORIES =================
+  // ------------------- FETCH CATEGORIES -------------------
   const fetchCategories = async () => {
     setLoadingCategories(true);
     setCategoriesError("");
@@ -68,13 +68,12 @@ const AdminPage = () => {
     }
   };
 
-  // 3)================= FETCH PROJECTS ===================
+  // ------------------- FETCH PROJECTS -------------------
   const fetchProjects = async () => {
     setLoadingProjects(true);
     setProjectsError("");
 
     try {
-      // Build query params according to the new API docs
       const params = {
         search: activeFilters.search || undefined,
         status: activeFilters.status || undefined,
@@ -93,7 +92,7 @@ const AdminPage = () => {
     }
   };
 
-  // 4)================= ACCEPT PROJECT ===================
+  // ------------------- ACCEPT PROJECT -------------------
   const acceptProject = async () => {
     if (!selectedProject) return;
     setActionLoading("accept");
@@ -111,7 +110,7 @@ const AdminPage = () => {
     }
   };
 
-  // 5)================= REJECT PROJECT ===================
+  // ------------------- REJECT PROJECT -------------------
   const rejectProject = async () => {
     if (!selectedProject) return;
     setActionLoading("reject");
@@ -129,7 +128,7 @@ const AdminPage = () => {
     }
   };
 
-  // 6)================= START PROJECT ====================
+  // ------------------- START PROJECT -------------------
   const startProject = async () => {
     if (!selectedProject) return;
     setActionLoading("start");
@@ -145,7 +144,7 @@ const AdminPage = () => {
     }
   };
 
-  // 7)================= COMPLETE PROJECT =================
+  // ------------------- COMPLETE PROJECT -------------------
   const completeProject = async () => {
     if (!selectedProject) return;
     setActionLoading("complete");
@@ -161,7 +160,7 @@ const AdminPage = () => {
     }
   };
 
-  // 8)================= FETCH LOGS =======================
+  // ------------------- FETCH LOGS -------------------
   const fetchLogs = async () => {
     setLogsError("");
     setLoadingLogs(true);
@@ -185,7 +184,7 @@ const AdminPage = () => {
     setIsLogsModalOpen(false);
   };
 
-  // useEffect calls
+  // ------------------- useEffect -------------------
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -195,7 +194,7 @@ const AdminPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFilters]);
 
-  // Filters
+  // ------------------- FILTERS -------------------
   const handleFilterChange = (e) => {
     const { id, value } = e.target;
     setFilters((prevFilters) => ({
@@ -208,7 +207,7 @@ const AdminPage = () => {
     setActiveFilters({ ...filters });
   };
 
-  // Modal open/close for Projects
+  // ------------------- MODAL OPEN/CLOSE -------------------
   const openModal = (project) => {
     setSelectedProject(project);
     setComment("");
@@ -218,12 +217,15 @@ const AdminPage = () => {
     setSelectedProject(null);
   };
 
+  // ------------------- RENDER -------------------
   return (
-    <div className="bg-[#1c1e26] min-h-screen text-white px-4 py-4">
+    <div className="bg-[#1c1e26] min-h-screen text-white px-4 py-6 leading-relaxed">
       {/* Header */}
       <header className="bg-[#2a2d38] py-4 px-6 sm:px-10 flex justify-between items-center rounded-lg shadow-md">
         <Link to="/">
-          <h1 className="text-lg sm:text-2xl font-bold">SDU IT PARK</h1>
+          <h1 className="text-lg sm:text-2xl font-bold text-white">
+            SDU IT PARK
+          </h1>
         </Link>
         <div className="flex gap-2">
           <button
@@ -242,18 +244,21 @@ const AdminPage = () => {
       </header>
 
       {/* Filters Section */}
-      <section className="p-4 flex flex-col sm:flex-row sm:flex-wrap justify-center gap-4">
+      <section className="px-4 py-6 flex flex-col sm:flex-row sm:flex-wrap justify-center gap-4">
         {/* Search Filter */}
         <div className="flex flex-col">
-          <label htmlFor="search" className="text-sm sm:text-base font-medium">
+          <label
+            htmlFor="search"
+            className="text-base font-medium text-gray-300 mb-1"
+          >
             Search:
           </label>
           <input
             id="search"
             type="text"
             placeholder="Enter keywords..."
-            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
-                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 text-gray-200 
+                       focus:outline-none focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
             value={filters.search}
             onChange={handleFilterChange}
           />
@@ -261,13 +266,16 @@ const AdminPage = () => {
 
         {/* Status Filter */}
         <div className="flex flex-col">
-          <label htmlFor="status" className="text-sm sm:text-base font-medium">
+          <label
+            htmlFor="status"
+            className="text-base font-medium text-gray-300 mb-1"
+          >
             Status:
           </label>
           <select
             id="status"
-            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
-                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 text-gray-200 
+                       focus:outline-none focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
             value={filters.status}
             onChange={handleFilterChange}
           >
@@ -284,14 +292,14 @@ const AdminPage = () => {
         <div className="flex flex-col">
           <label
             htmlFor="category"
-            className="text-sm sm:text-base font-medium"
+            className="text-base font-medium text-gray-300 mb-1"
           >
             Category:
           </label>
           <select
             id="category"
-            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
-                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 text-gray-200 
+                       focus:outline-none focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
             value={filters.category}
             onChange={handleFilterChange}
             disabled={loadingCategories}
@@ -312,14 +320,14 @@ const AdminPage = () => {
         <div className="flex flex-col">
           <label
             htmlFor="priority"
-            className="text-sm sm:text-base font-medium"
+            className="text-base font-medium text-gray-300 mb-1"
           >
             Priority:
           </label>
           <select
             id="priority"
-            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
-                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 text-gray-200 
+                       focus:outline-none focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
             value={filters.priority}
             onChange={handleFilterChange}
           >
@@ -334,14 +342,14 @@ const AdminPage = () => {
         <div className="flex flex-col">
           <label
             htmlFor="ordering"
-            className="text-sm sm:text-base font-medium"
+            className="text-base font-medium text-gray-300 mb-1"
           >
             Sort by Date:
           </label>
           <select
             id="ordering"
-            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
-                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 text-gray-200 
+                       focus:outline-none focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
             value={filters.ordering}
             onChange={handleFilterChange}
           >
@@ -352,9 +360,8 @@ const AdminPage = () => {
 
         {/* Apply Filters Button */}
         <button
-          className="bg-[#33ADA9] hover:bg-teal-600 text-white px-4 py-2 rounded text-sm 
-                     sm:text-base mt-4 sm:mt-0 self-start sm:self-center 
-                     transition-colors duration-200"
+          className="bg-[#33ADA9] hover:bg-teal-600 text-white px-4 py-2 rounded text-base 
+                     mt-4 sm:mt-0 self-start sm:self-center transition-colors duration-200"
           onClick={applyFilters}
         >
           Apply Filters
@@ -362,14 +369,15 @@ const AdminPage = () => {
       </section>
 
       {/* Projects Section */}
-      <section className="p-4 flex flex-col items-center">
-        <div className="w-full max-w-4xl bg-[#2a2d38] p-4 rounded-lg shadow-md">
-          <h2 className="text-xl sm:text-2xl font-bold mb-4">Projects</h2>
+      <section className="px-4 pb-6 flex flex-col items-center">
+        <div className="w-full max-w-4xl bg-[#2a2d38] p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold mb-4 text-white">Projects</h2>
           {loadingProjects ? (
-            <p>Loading projects...</p>
+            <p className="text-gray-300">Loading projects...</p>
           ) : projectsError ? (
             <p className="text-red-400">{projectsError}</p>
           ) : projects.length > 0 ? (
+            // Vertical layout: one card after another
             <div className="space-y-3">
               {projects.map((project) => (
                 <ProjectCard
@@ -380,7 +388,7 @@ const AdminPage = () => {
               ))}
             </div>
           ) : (
-            <p>No projects found.</p>
+            <p className="text-gray-300">No projects found.</p>
           )}
         </div>
       </section>
@@ -391,7 +399,6 @@ const AdminPage = () => {
         comment={comment}
         onCommentChange={setComment}
         onClose={closeModal}
-        // Updated to include Start/Complete
         onAccept={acceptProject}
         onReject={rejectProject}
         onStart={startProject}

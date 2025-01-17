@@ -13,7 +13,7 @@ const ProjectModal = ({
 }) => {
   const isOpen = Boolean(project);
 
-  // Format creation date (unchanged)
+  // Format creation date
   let formattedCreatedDate = "";
   if (project?.created_at) {
     const dateObj = new Date(project.created_at);
@@ -44,8 +44,9 @@ const ProjectModal = ({
     >
       <div
         className={`
-          bg-[#2a2d38] p-6 rounded-lg w-full max-w-lg relative
+          bg-[#2a2d38] p-6 sm:p-8 rounded-lg w-full max-w-lg relative
           transition-transform duration-300
+          leading-relaxed
           ${isOpen ? "scale-100" : "scale-95"}
         `}
       >
@@ -60,50 +61,50 @@ const ProjectModal = ({
 
         {project && (
           <>
-            <h3 className="text-xl sm:text-2xl font-bold mb-4">
+            <h3 className="text-2xl font-bold mb-4 text-white">
               {project.title}
             </h3>
 
-            <div className="max-h-40 overflow-y-auto pr-2 mb-4">
-              <p className="text-sm sm:text-base whitespace-pre-wrap break-words">
+            <div className="max-h-64 overflow-y-auto pr-3 mb-4 text-gray-200">
+              <p className="text-base whitespace-pre-wrap break-words">
                 {project.description}
               </p>
             </div>
 
-            <p className="text-sm sm:text-base mb-2">
+            <p className="text-base text-gray-200 mb-2">
               <span className="font-semibold">Status:</span> {project.status}
             </p>
             {project.priority && (
-              <p className="text-sm sm:text-base mb-2">
+              <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Priority:</span>{" "}
                 {project.priority}
               </p>
             )}
             {project.created_at && (
-              <p className="text-sm sm:text-base mb-2">
+              <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Created At:</span>{" "}
                 {formattedCreatedDate}
               </p>
             )}
             {project.budget && (
-              <p className="text-sm sm:text-base mb-2">
+              <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Budget:</span> {project.budget}
               </p>
             )}
             {project.sender_name && (
-              <p className="text-sm sm:text-base mb-2">
+              <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Sender Name:</span>{" "}
                 {project.sender_name}
               </p>
             )}
             {project.contact_email && (
-              <p className="text-sm sm:text-base mb-2">
+              <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Contact Email:</span>{" "}
                 {project.contact_email}
               </p>
             )}
 
-            <p className="text-sm sm:text-base mb-2">
+            <p className="text-base text-gray-200 mb-2">
               <span className="font-semibold">Attachments:</span>
               {project.attachments?.length > 0 ? (
                 project.attachments.map((attachment, index) => (
@@ -112,7 +113,7 @@ const ProjectModal = ({
                     href={attachment.file}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-blue-400 hover:underline"
+                    className="block text-blue-400 hover:underline mt-1"
                   >
                     {attachment.name || `Attachment ${index + 1}`}
                   </a>
@@ -123,11 +124,18 @@ const ProjectModal = ({
             </p>
 
             {/* Comment Textarea (for Accept/Reject) */}
+            <label
+              htmlFor="projectComment"
+              className="block text-gray-300 mt-4 mb-1"
+            >
+              Your Comment
+            </label>
             <textarea
+              id="projectComment"
               placeholder="Enter your comment..."
-              className="w-full p-2 mt-2 bg-[#1c1e26] border border-gray-600 rounded 
-                         text-white focus:outline-none focus:ring-2 focus:ring-[#33ADA9] 
-                         transition-all duration-200"
+              className="w-full p-2 bg-[#1c1e26] border border-gray-600 rounded 
+                         text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#33ADA9] 
+                         transition-all duration-200 leading-relaxed"
               value={comment}
               onChange={(e) => onCommentChange(e.target.value)}
               disabled={
@@ -136,7 +144,7 @@ const ProjectModal = ({
             />
 
             {/* ACTION BUTTONS */}
-            <div className="flex flex-wrap gap-4 mt-4 justify-end">
+            <div className="flex flex-wrap gap-4 mt-6 justify-end">
               {/* Accept only if status = NEW */}
               {project.status === "NEW" && (
                 <button
