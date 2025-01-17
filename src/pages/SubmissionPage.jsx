@@ -14,9 +14,11 @@ const SubmissionPage = () => {
   const [fileUploads, setFileUploads] = useState([]);
   const [projectCategory, setProjectCategory] = useState("");
   const [senderName, setSenderName] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  // New state variable to control success section visibility
+  // NEW: Priority state
+  const [projectPriority, setProjectPriority] = useState("");
+
+  const [loading, setLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Character limits
@@ -61,12 +63,14 @@ const SubmissionPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Basic validations
     if (
       !projectCategory ||
       !projectTitle ||
       !projectDescription ||
       !contactEmail ||
-      !senderName
+      !senderName ||
+      !projectPriority
     ) {
       alert("Please fill in all required fields.");
       return;
@@ -82,7 +86,7 @@ const SubmissionPage = () => {
       return;
     }
 
-    // Updated allowed file types
+    // File validations
     const validTypes = [
       "image/jpeg",
       "image/png",
@@ -107,6 +111,7 @@ const SubmissionPage = () => {
     setLoading(true);
 
     try {
+      // IMPORTANT: Pass the priority to the backend
       const projectResponse = await axiosDefault.post("/projects/", {
         title: projectTitle,
         description: projectDescription,
@@ -116,6 +121,8 @@ const SubmissionPage = () => {
         contact_email: contactEmail,
         category:
           categories.find((c) => c.name === projectCategory)?.id || null,
+        // NEW: Priority
+        priority: projectPriority,
       });
 
       const projectId = projectResponse.data.id;
@@ -131,7 +138,6 @@ const SubmissionPage = () => {
         });
       }
 
-      // Once everything is successful, switch to success state
       setIsSubmitted(true);
     } catch (error) {
       console.error("Error submitting project proposal:", error);
@@ -143,7 +149,6 @@ const SubmissionPage = () => {
 
   return (
     <div className="min-h-screen bg-[#1c1e26] flex flex-col items-center px-4 py-6">
-      {/* Header */}
       <header className="w-full bg-[#2a2d38] py-4 px-6 sm:px-10 rounded-lg shadow-md">
         <Link to="/">
           <h1 className="text-xl sm:text-2xl text-white font-bold">
@@ -152,15 +157,13 @@ const SubmissionPage = () => {
         </Link>
       </header>
 
-      {/* Conditionally render the form or the success message */}
       {!isSubmitted ? (
-        // FORM SECTION
         <div className="w-full max-w-md sm:max-w-lg bg-[#2a2d38] p-6 sm:p-8 rounded-lg shadow-lg mt-8">
           <h2 className="text-white text-lg sm:text-xl font-bold text-center mb-6">
             Submit Your Project Proposal
           </h2>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            {/* Input Fields */}
+            {/* Name */}
             <div>
               <label
                 htmlFor="senderName"
@@ -182,6 +185,8 @@ const SubmissionPage = () => {
                            transition-all duration-200"
               />
             </div>
+
+            {/* Title */}
             <div>
               <label
                 htmlFor="projectTitle"
@@ -205,6 +210,8 @@ const SubmissionPage = () => {
                            transition-all duration-200"
               />
             </div>
+
+            {/* Description */}
             <div>
               <label
                 htmlFor="projectDescription"
@@ -232,6 +239,8 @@ const SubmissionPage = () => {
                 characters
               </p>
             </div>
+
+            {/* Budget */}
             <div>
               <label
                 htmlFor="budget"
@@ -250,6 +259,8 @@ const SubmissionPage = () => {
                            transition-all duration-200"
               />
             </div>
+
+            {/* Deadline */}
             <div>
               <label
                 htmlFor="deadline"
@@ -267,6 +278,8 @@ const SubmissionPage = () => {
                            transition-all duration-200"
               />
             </div>
+
+            {/* Email */}
             <div>
               <label
                 htmlFor="email"
@@ -287,7 +300,7 @@ const SubmissionPage = () => {
               />
             </div>
 
-            {/* Category Selector */}
+            {/* Category */}
             <div>
               <label
                 htmlFor="category"
@@ -314,6 +327,31 @@ const SubmissionPage = () => {
                     {category.name}
                   </option>
                 ))}
+              </select>
+            </div>
+
+            {/* NEW: Priority */}
+            <div>
+              <label
+                htmlFor="priority"
+                className="block text-gray-300 text-sm sm:text-base font-medium mb-1"
+              >
+                Priority
+              </label>
+              <select
+                id="priority"
+                value={projectPriority}
+                onChange={(e) => setProjectPriority(e.target.value)}
+                className="w-full px-3 py-2 bg-[#1c1e26] text-white rounded-md 
+                           focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                           transition-all duration-200"
+              >
+                <option value="" disabled>
+                  Select a Priority
+                </option>
+                <option value="HIGH">HIGH</option>
+                <option value="MEDIUM">MEDIUM</option>
+                <option value="LOW">LOW</option>
               </select>
             </div>
 
@@ -368,21 +406,6 @@ const SubmissionPage = () => {
       ) : (
         // SUCCESS SECTION
         <div className="w-full max-w-md sm:max-w-lg bg-[#2a2d38] p-6 sm:p-8 rounded-lg shadow-lg mt-8 flex flex-col items-center">
-          {/* Optionally add a checkmark icon here */}
-          {/* <svg
-            className="w-12 h-12 text-green-400 mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 11l3 3L22 4"
-            />
-          </svg> */}
           <h2 className="text-2xl text-white font-bold mb-4">
             Thank You For Your Submission!
           </h2>
