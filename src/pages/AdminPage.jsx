@@ -1,4 +1,3 @@
-// AdminPage.js
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
@@ -26,11 +25,12 @@ const AdminPage = () => {
   const [loadingLogs, setLoadingLogs] = useState(false);
   const [logsError, setLogsError] = useState("");
 
-  // Filters
+  // ====================== FILTERS =======================
   const [filters, setFilters] = useState({
     search: "",
     status: "",
     category: "",
+    priority: "",
     ordering: "-created_at",
   });
   const [activeFilters, setActiveFilters] = useState({ ...filters });
@@ -39,7 +39,8 @@ const AdminPage = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [comment, setComment] = useState("");
 
-  // Accept/Reject loading state: "accept" | "reject" | null
+  // Accept/Reject/Start/Complete loading state
+  // "accept" | "reject" | "start" | "complete" | null
   const [actionLoading, setActionLoading] = useState(null);
 
   // 1)===================== LOGOUT ======================
@@ -71,13 +72,17 @@ const AdminPage = () => {
   const fetchProjects = async () => {
     setLoadingProjects(true);
     setProjectsError("");
+
     try {
+      // Build query params according to the new API docs
       const params = {
         search: activeFilters.search || undefined,
         status: activeFilters.status || undefined,
-        category__name__icontains: activeFilters.category || undefined,
+        category__name: activeFilters.category || undefined,
+        priority: activeFilters.priority || undefined,
         ordering: activeFilters.ordering || undefined,
       };
+
       const response = await axiosInstance.get("/projects/", { params });
       setProjects(response.data);
     } catch (error) {
@@ -88,7 +93,7 @@ const AdminPage = () => {
     }
   };
 
-  // 4)=========== ACCEPT PROJECT (SET actionLoading) =====
+  // 4)================= ACCEPT PROJECT ===================
   const acceptProject = async () => {
     if (!selectedProject) return;
     setActionLoading("accept");
@@ -106,7 +111,7 @@ const AdminPage = () => {
     }
   };
 
-  // 5)=========== REJECT PROJECT (SET actionLoading) =====
+  // 5)================= REJECT PROJECT ===================
   const rejectProject = async () => {
     if (!selectedProject) return;
     setActionLoading("reject");
@@ -124,7 +129,39 @@ const AdminPage = () => {
     }
   };
 
-  // 6)=========== FETCH LOGS (INDEPENDENT FUNCTION) =======
+  // 6)================= START PROJECT ====================
+  const startProject = async () => {
+    if (!selectedProject) return;
+    setActionLoading("start");
+    try {
+      await axiosInstance.post(`/projects/${selectedProject.id}/start/`);
+      fetchProjects();
+      setSelectedProject(null);
+    } catch (error) {
+      console.error("Failed to start project:", error);
+      alert("Failed to start project. Please try again.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // 7)================= COMPLETE PROJECT =================
+  const completeProject = async () => {
+    if (!selectedProject) return;
+    setActionLoading("complete");
+    try {
+      await axiosInstance.post(`/projects/${selectedProject.id}/completed/`);
+      fetchProjects();
+      setSelectedProject(null);
+    } catch (error) {
+      console.error("Failed to complete project:", error);
+      alert("Failed to complete project. Please try again.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // 8)================= FETCH LOGS =======================
   const fetchLogs = async () => {
     setLogsError("");
     setLoadingLogs(true);
@@ -139,19 +176,16 @@ const AdminPage = () => {
     }
   };
 
-  // 7)============= OPEN LOGS MODAL IMMEDIATELY ===========
-  //    Then load logs in the background
   const openLogsModal = () => {
-    setIsLogsModalOpen(true); // show the modal right away
-    fetchLogs(); // fetch logs asynchronously
+    setIsLogsModalOpen(true);
+    fetchLogs();
   };
 
-  // 8)============== CLOSE LOGS MODAL ======================
   const closeLogsModal = () => {
     setIsLogsModalOpen(false);
   };
 
-  // -- useEffect calls --
+  // useEffect calls
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -212,13 +246,14 @@ const AdminPage = () => {
         {/* Search Filter */}
         <div className="flex flex-col">
           <label htmlFor="search" className="text-sm sm:text-base font-medium">
-            Search by keywords:
+            Search:
           </label>
           <input
             id="search"
             type="text"
             placeholder="Enter keywords..."
-            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
+                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
             value={filters.search}
             onChange={handleFilterChange}
           />
@@ -227,18 +262,21 @@ const AdminPage = () => {
         {/* Status Filter */}
         <div className="flex flex-col">
           <label htmlFor="status" className="text-sm sm:text-base font-medium">
-            Filter by status:
+            Status:
           </label>
           <select
             id="status"
-            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
+                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
             value={filters.status}
             onChange={handleFilterChange}
           >
             <option value="">All</option>
-            <option value="NEW">New</option>
-            <option value="REJECTED">Rejected</option>
-            <option value="ACCEPTED">Accepted</option>
+            <option value="NEW">NEW</option>
+            <option value="ACCEPTED">ACCEPTED</option>
+            <option value="IN_PROGRESS">IN_PROGRESS</option>
+            <option value="COMPLETED">COMPLETED</option>
+            <option value="REJECTED">REJECTED</option>
           </select>
         </div>
 
@@ -252,7 +290,8 @@ const AdminPage = () => {
           </label>
           <select
             id="category"
-            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
+                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
             value={filters.category}
             onChange={handleFilterChange}
             disabled={loadingCategories}
@@ -269,6 +308,28 @@ const AdminPage = () => {
           )}
         </div>
 
+        {/* Priority Filter */}
+        <div className="flex flex-col">
+          <label
+            htmlFor="priority"
+            className="text-sm sm:text-base font-medium"
+          >
+            Priority:
+          </label>
+          <select
+            id="priority"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
+                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            value={filters.priority}
+            onChange={handleFilterChange}
+          >
+            <option value="">All</option>
+            <option value="HIGH">HIGH</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="LOW">LOW</option>
+          </select>
+        </div>
+
         {/* Sort by Date Filter */}
         <div className="flex flex-col">
           <label
@@ -279,18 +340,21 @@ const AdminPage = () => {
           </label>
           <select
             id="ordering"
-            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
+            className="p-2 rounded bg-[#2a2d38] border border-gray-600 focus:outline-none 
+                       focus:ring-2 focus:ring-[#33ADA9] transition-all duration-200"
             value={filters.ordering}
             onChange={handleFilterChange}
           >
-            <option value="-created_at">Date (Newest first)</option>
-            <option value="created_at">Date (Oldest first)</option>
+            <option value="-created_at">Newest first</option>
+            <option value="created_at">Oldest first</option>
           </select>
         </div>
 
         {/* Apply Filters Button */}
         <button
-          className="bg-[#33ADA9] hover:bg-teal-600 text-white px-4 py-2 rounded text-sm sm:text-base mt-4 sm:mt-0 self-start sm:self-center transition-colors duration-200"
+          className="bg-[#33ADA9] hover:bg-teal-600 text-white px-4 py-2 rounded text-sm 
+                     sm:text-base mt-4 sm:mt-0 self-start sm:self-center 
+                     transition-colors duration-200"
           onClick={applyFilters}
         >
           Apply Filters
@@ -327,8 +391,11 @@ const AdminPage = () => {
         comment={comment}
         onCommentChange={setComment}
         onClose={closeModal}
+        // Updated to include Start/Complete
         onAccept={acceptProject}
         onReject={rejectProject}
+        onStart={startProject}
+        onComplete={completeProject}
         actionLoading={actionLoading}
       />
 

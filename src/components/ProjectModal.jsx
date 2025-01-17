@@ -7,11 +7,11 @@ const ProjectModal = ({
   onClose,
   onAccept,
   onReject,
-  actionLoading, // "accept" | "reject" | null
+  onStart,
+  onComplete,
+  actionLoading, // "accept" | "reject" | "start" | "complete" | null
 }) => {
-  // Instead of not rendering at all, we always render a wrapper
-  // and just toggle opacity, pointer-events, etc.
-  const isOpen = Boolean(project); // or: !!project
+  const isOpen = Boolean(project);
 
   // Format creation date (unchanged)
   let formattedCreatedDate = "";
@@ -25,6 +25,8 @@ const ProjectModal = ({
 
   const isAccepting = actionLoading === "accept";
   const isRejecting = actionLoading === "reject";
+  const isStarting = actionLoading === "start";
+  const isCompleting = actionLoading === "complete";
 
   return (
     <div
@@ -40,7 +42,6 @@ const ProjectModal = ({
         }
       `}
     >
-      {/* Modal content container */}
       <div
         className={`
           bg-[#2a2d38] p-6 rounded-lg w-full max-w-lg relative
@@ -52,12 +53,11 @@ const ProjectModal = ({
         <button
           className="absolute top-2 right-2 text-white text-2xl hover:text-gray-400 transition-colors duration-200"
           onClick={onClose}
-          disabled={isAccepting || isRejecting}
+          disabled={isAccepting || isRejecting || isStarting || isCompleting}
         >
           &times;
         </button>
 
-        {/* We can safely check if project is present for the content */}
         {project && (
           <>
             <h3 className="text-xl sm:text-2xl font-bold mb-4">
@@ -73,27 +73,29 @@ const ProjectModal = ({
             <p className="text-sm sm:text-base mb-2">
               <span className="font-semibold">Status:</span> {project.status}
             </p>
-
+            {project.priority && (
+              <p className="text-sm sm:text-base mb-2">
+                <span className="font-semibold">Priority:</span>{" "}
+                {project.priority}
+              </p>
+            )}
             {project.created_at && (
               <p className="text-sm sm:text-base mb-2">
                 <span className="font-semibold">Created At:</span>{" "}
                 {formattedCreatedDate}
               </p>
             )}
-
             {project.budget && (
               <p className="text-sm sm:text-base mb-2">
                 <span className="font-semibold">Budget:</span> {project.budget}
               </p>
             )}
-
             {project.sender_name && (
               <p className="text-sm sm:text-base mb-2">
                 <span className="font-semibold">Sender Name:</span>{" "}
                 {project.sender_name}
               </p>
             )}
-
             {project.contact_email && (
               <p className="text-sm sm:text-base mb-2">
                 <span className="font-semibold">Contact Email:</span>{" "}
@@ -120,37 +122,80 @@ const ProjectModal = ({
               )}
             </p>
 
-            {/* Comment Textarea */}
+            {/* Comment Textarea (for Accept/Reject) */}
             <textarea
               placeholder="Enter your comment..."
-              className="w-full p-2 mt-2 bg-[#1c1e26] border border-gray-600 rounded text-white 
-                         focus:outline-none focus:ring-2 focus:ring-[#33ADA9] 
+              className="w-full p-2 mt-2 bg-[#1c1e26] border border-gray-600 rounded 
+                         text-white focus:outline-none focus:ring-2 focus:ring-[#33ADA9] 
                          transition-all duration-200"
               value={comment}
               onChange={(e) => onCommentChange(e.target.value)}
-              disabled={isAccepting || isRejecting}
+              disabled={
+                isAccepting || isRejecting || isStarting || isCompleting
+              }
             />
 
-            {/* Action Buttons */}
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                onClick={onAccept}
-                disabled={isRejecting || isAccepting}
-                className="bg-[#33ADA9] px-4 py-2 rounded text-white 
-                           hover:bg-teal-600 transition-colors duration-200
-                           disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {isAccepting ? "Accepting..." : "Accept"}
-              </button>
-              <button
-                onClick={onReject}
-                disabled={isRejecting || isAccepting}
-                className="bg-gray-700 px-4 py-2 rounded text-white 
-                           hover:bg-gray-600 transition-colors duration-200
-                           disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {isRejecting ? "Rejecting..." : "Reject"}
-              </button>
+            {/* ACTION BUTTONS */}
+            <div className="flex flex-wrap gap-4 mt-4 justify-end">
+              {/* Accept only if status = NEW */}
+              {project.status === "NEW" && (
+                <button
+                  onClick={onAccept}
+                  disabled={
+                    isAccepting || isRejecting || isStarting || isCompleting
+                  }
+                  className="bg-[#33ADA9] px-4 py-2 rounded text-white 
+                             hover:bg-teal-600 transition-colors duration-200
+                             disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isAccepting ? "Accepting..." : "Accept"}
+                </button>
+              )}
+
+              {/* Reject only if status = NEW */}
+              {project.status === "NEW" && (
+                <button
+                  onClick={onReject}
+                  disabled={
+                    isAccepting || isRejecting || isStarting || isCompleting
+                  }
+                  className="bg-gray-700 px-4 py-2 rounded text-white 
+                             hover:bg-gray-600 transition-colors duration-200
+                             disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isRejecting ? "Rejecting..." : "Reject"}
+                </button>
+              )}
+
+              {/* Start only if status = ACCEPTED */}
+              {project.status === "ACCEPTED" && (
+                <button
+                  onClick={onStart}
+                  disabled={
+                    isAccepting || isRejecting || isStarting || isCompleting
+                  }
+                  className="bg-green-600 px-4 py-2 rounded text-white 
+                             hover:bg-green-500 transition-colors duration-200
+                             disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isStarting ? "Starting..." : "Start"}
+                </button>
+              )}
+
+              {/* Complete only if status = IN_PROGRESS */}
+              {project.status === "IN_PROGRESS" && (
+                <button
+                  onClick={onComplete}
+                  disabled={
+                    isAccepting || isRejecting || isStarting || isCompleting
+                  }
+                  className="bg-blue-600 px-4 py-2 rounded text-white 
+                             hover:bg-blue-500 transition-colors duration-200
+                             disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isCompleting ? "Completing..." : "Complete"}
+                </button>
+              )}
             </div>
           </>
         )}

@@ -1,7 +1,6 @@
 import React from "react";
 
 const LogsModal = ({ open, logs, onClose, loading, error }) => {
-  // We don't immediately return null if not open. Instead, let's always render the overlay:
   return (
     <div
       className={`
@@ -50,6 +49,10 @@ const LogsModal = ({ open, logs, onClose, loading, error }) => {
                   <th className="whitespace-nowrap p-2 border-b border-gray-600 text-left">
                     Logger
                   </th>
+                  {/* NEW: Add Interacted By column */}
+                  <th className="whitespace-nowrap p-2 border-b border-gray-600 text-left">
+                    Interacted By
+                  </th>
                   <th className="whitespace-nowrap p-2 border-b border-gray-600 text-left">
                     Created At
                   </th>
@@ -60,8 +63,9 @@ const LogsModal = ({ open, logs, onClose, loading, error }) => {
                   <tr key={index} className="border-b border-gray-600">
                     <td className="p-2 break-words">{log.message}</td>
                     <td className="p-2 break-words">{log.logger_name}</td>
+                    {/* NEW: Display interacted_by */}
+                    <td className="p-2 break-words">{log.interacted_by}</td>
                     <td className="p-2 whitespace-nowrap">
-                      {/* A small helper function to format the date */}
                       {new Date(log.created_at).toLocaleDateString()}
                     </td>
                   </tr>
