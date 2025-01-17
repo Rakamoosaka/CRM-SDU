@@ -31,8 +31,8 @@ const ProjectModal = ({
   return (
     <div
       className={`
-        fixed inset-0 z-50 p-4 
-        bg-black bg-opacity-50 
+        fixed inset-0 z-50 p-4
+        bg-black bg-opacity-50
         flex justify-center items-center
         transition-opacity duration-300
         ${
@@ -61,12 +61,14 @@ const ProjectModal = ({
 
         {project && (
           <>
-            <h3 className="text-2xl font-bold mb-4 text-white">
+            {/* Force wrapping of extremely long titles */}
+            <h3 className="text-2xl font-bold mb-4 text-white break-all">
               {project.title}
             </h3>
 
             <div className="max-h-64 overflow-y-auto pr-3 mb-4 text-gray-200">
-              <p className="text-base whitespace-pre-wrap break-words">
+              {/* Force wrapping for the description */}
+              <p className="text-base whitespace-pre-wrap break-all">
                 {project.description}
               </p>
             </div>
@@ -74,29 +76,34 @@ const ProjectModal = ({
             <p className="text-base text-gray-200 mb-2">
               <span className="font-semibold">Status:</span> {project.status}
             </p>
+
             {project.priority && (
               <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Priority:</span>{" "}
                 {project.priority}
               </p>
             )}
+
             {project.created_at && (
               <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Created At:</span>{" "}
                 {formattedCreatedDate}
               </p>
             )}
+
             {project.budget && (
               <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Budget:</span> {project.budget}
               </p>
             )}
+
             {project.sender_name && (
               <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Sender Name:</span>{" "}
                 {project.sender_name}
               </p>
             )}
+
             {project.contact_email && (
               <p className="text-base text-gray-200 mb-2">
                 <span className="font-semibold">Contact Email:</span>{" "}
@@ -133,8 +140,8 @@ const ProjectModal = ({
             <textarea
               id="projectComment"
               placeholder="Enter your comment..."
-              className="w-full p-2 bg-[#1c1e26] border border-gray-600 rounded 
-                         text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#33ADA9] 
+              className="w-full p-2 bg-[#1c1e26] border border-gray-600 rounded
+                         text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
                          transition-all duration-200 leading-relaxed"
               value={comment}
               onChange={(e) => onCommentChange(e.target.value)}
@@ -145,14 +152,13 @@ const ProjectModal = ({
 
             {/* ACTION BUTTONS */}
             <div className="flex flex-wrap gap-4 mt-6 justify-end">
-              {/* Accept only if status = NEW */}
               {project.status === "NEW" && (
                 <button
                   onClick={onAccept}
                   disabled={
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
-                  className="bg-[#33ADA9] px-4 py-2 rounded text-white 
+                  className="bg-[#33ADA9] px-4 py-2 rounded text-white
                              hover:bg-teal-600 transition-colors duration-200
                              disabled:opacity-70 disabled:cursor-not-allowed"
                 >
@@ -160,14 +166,13 @@ const ProjectModal = ({
                 </button>
               )}
 
-              {/* Reject only if status = NEW */}
               {project.status === "NEW" && (
                 <button
                   onClick={onReject}
                   disabled={
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
-                  className="bg-gray-700 px-4 py-2 rounded text-white 
+                  className="bg-gray-700 px-4 py-2 rounded text-white
                              hover:bg-gray-600 transition-colors duration-200
                              disabled:opacity-70 disabled:cursor-not-allowed"
                 >
@@ -175,14 +180,13 @@ const ProjectModal = ({
                 </button>
               )}
 
-              {/* Start only if status = ACCEPTED */}
               {project.status === "ACCEPTED" && (
                 <button
                   onClick={onStart}
                   disabled={
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
-                  className="bg-green-600 px-4 py-2 rounded text-white 
+                  className="bg-green-600 px-4 py-2 rounded text-white
                              hover:bg-green-500 transition-colors duration-200
                              disabled:opacity-70 disabled:cursor-not-allowed"
                 >
@@ -190,14 +194,13 @@ const ProjectModal = ({
                 </button>
               )}
 
-              {/* Complete only if status = IN_PROGRESS */}
               {project.status === "IN_PROGRESS" && (
                 <button
                   onClick={onComplete}
                   disabled={
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
-                  className="bg-blue-600 px-4 py-2 rounded text-white 
+                  className="bg-blue-600 px-4 py-2 rounded text-white
                              hover:bg-blue-500 transition-colors duration-200
                              disabled:opacity-70 disabled:cursor-not-allowed"
                 >
