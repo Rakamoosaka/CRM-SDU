@@ -130,25 +130,30 @@ const ProjectModal = ({
               )}
             </p>
 
-            {/* Comment Textarea (for Accept/Reject) */}
-            <label
-              htmlFor="projectComment"
-              className="block text-gray-300 mt-4 mb-1"
-            >
-              Your Comment
-            </label>
-            <textarea
-              id="projectComment"
-              placeholder="Enter your comment..."
-              className="w-full p-2 bg-[#1c1e26] border border-gray-600 rounded
-                         text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
-                         transition-all duration-200 leading-relaxed"
-              value={comment}
-              onChange={(e) => onCommentChange(e.target.value)}
-              disabled={
-                isAccepting || isRejecting || isStarting || isCompleting
-              }
-            />
+            {/* Hide comment area for COMPLETED or REJECTED projects */}
+            {project.status !== "COMPLETED" &&
+              project.status !== "REJECTED" && (
+                <>
+                  <label
+                    htmlFor="projectComment"
+                    className="block text-gray-300 mt-4 mb-1"
+                  >
+                    Your Comment
+                  </label>
+                  <textarea
+                    id="projectComment"
+                    placeholder="Enter your comment..."
+                    className="w-full p-2 bg-[#1c1e26] border border-gray-600 rounded
+                             text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                             transition-all duration-200 leading-relaxed"
+                    value={comment}
+                    onChange={(e) => onCommentChange(e.target.value)}
+                    disabled={
+                      isAccepting || isRejecting || isStarting || isCompleting
+                    }
+                  />
+                </>
+              )}
 
             {/* ACTION BUTTONS */}
             <div className="flex flex-wrap gap-4 mt-6 justify-end">
