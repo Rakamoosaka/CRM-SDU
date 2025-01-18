@@ -141,7 +141,9 @@ const AdminPage = () => {
     if (!selectedProject) return;
     setActionLoading("start");
     try {
-      await axiosInstance.post(`/projects/${selectedProject.id}/start/`);
+      await axiosInstance.post(`/projects/${selectedProject.id}/start/`, {
+        comment_text: comment,
+      });
       fetchProjects();
       setSelectedProject(null);
     } catch (error) {
@@ -157,7 +159,9 @@ const AdminPage = () => {
     if (!selectedProject) return;
     setActionLoading("complete");
     try {
-      await axiosInstance.post(`/projects/${selectedProject.id}/completed/`);
+      await axiosInstance.post(`/projects/${selectedProject.id}/completed/`, {
+        comment_text: comment,
+      });
       fetchProjects();
       setSelectedProject(null);
     } catch (error) {
