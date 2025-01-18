@@ -48,7 +48,7 @@ const ProjectCard = ({ project, onClick }) => {
           ${badgeStyle}
         `}
       >
-        {project.status}
+        {project.status == "IN_PROGRESS" ? "IN PROGRESS" : project.status}
       </span>
 
       {/* Card content */}
