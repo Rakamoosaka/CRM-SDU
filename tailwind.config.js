@@ -7,5 +7,5 @@ export default {
       fontFamily: {},
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar-hide")],
 };

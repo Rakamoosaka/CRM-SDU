@@ -78,32 +78,20 @@ const AdminPage = () => {
     setProjectsError("");
 
     try {
-      const endpoint = viewMyProjects ? `/user/my_projects/` : "/projects/";
+      const endpoint = viewMyProjects ? `/user/my-projects/` : "/projects/";
 
-      const params = viewMyProjects
-        ? {
-            status: activeFilters.status || undefined,
-            category: activeFilters.category || undefined,
-            priority: activeFilters.priority || undefined,
-          }
-        : {
-            search: activeFilters.search || undefined,
-            status: activeFilters.status || undefined,
-            category__name__icontains: activeFilters.category || undefined,
-            priority: activeFilters.priority || undefined,
-            ordering: activeFilters.ordering || undefined,
-          };
+      const params = {
+        search: activeFilters.search || undefined,
+        status: activeFilters.status || undefined,
+        category__name__icontains: activeFilters.category || undefined,
+        priority: activeFilters.priority || undefined,
+        ordering: activeFilters.ordering || undefined,
+      };
       console.log(params);
-      if (viewMyProjects) {
-        const queryString = new URLSearchParams(params).toString();
-        const response = await axiosInstance.get(`${endpoint}?${queryString}`);
-        setProjects(response.data.projects || response.data);
-        console.log(projects);
-      } else {
-        const response = await axiosInstance.get(endpoint, { params });
-        setProjects(response.data.projects || response.data);
-        console.log(projects);
-      }
+
+      const response = await axiosInstance.get(endpoint, { params });
+      setProjects(response.data.projects || response.data);
+      console.log(projects);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
       setProjectsError("Failed to load projects. Please try again later.");
@@ -302,7 +290,7 @@ const AdminPage = () => {
             <option value="">All</option>
             <option value="NEW">NEW</option>
             <option value="ACCEPTED">ACCEPTED</option>
-            <option value="IN_PROGRESS">IN_PROGRESS</option>
+            <option value="IN_PROGRESS">IN PROGRESS</option>
             <option value="COMPLETED">COMPLETED</option>
             <option value="REJECTED">REJECTED</option>
           </select>

@@ -14,6 +14,10 @@ const App = () => {
       element: <LandingPage />,
     },
     {
+      path: "/home",
+      element: <LandingPage />,
+    },
+    {
       path: "/login",
       element: <Login />,
     },

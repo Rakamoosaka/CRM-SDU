@@ -1,6 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Footer = ({ isLandingPage, isLoginPage }) => {
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
   return (
     <div
       className={`${
@@ -8,10 +15,18 @@ const Footer = ({ isLandingPage, isLoginPage }) => {
       } bottom-10 flex flex-col items-center text-gray-500 text-xs`}
     >
       <div className="flex gap-4">
-        <a href="#" className="hover:underline">
+        <button
+          onClick={() => handleNavigation("/home")}
+          className="hover:underline"
+        >
           Home
-        </a>
-        <a href="#" className="hover:underline">
+        </button>
+        <a
+          href="https://sdu.edu.kz/language/en/corporate-development/technopark/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:underline"
+        >
           Contact
         </a>
       </div>

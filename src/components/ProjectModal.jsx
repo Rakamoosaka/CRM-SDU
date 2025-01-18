@@ -31,24 +31,24 @@ const ProjectModal = ({
   return (
     <div
       className={`
-        fixed inset-0 z-50 p-4
-        bg-black bg-opacity-50
-        flex justify-center items-center
-        transition-opacity duration-300
-        ${
-          isOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none"
-        }
-      `}
+    fixed inset-0 z-50 p-4
+    bg-black bg-opacity-50
+    flex justify-center items-center
+    transition-opacity duration-300
+    ${
+      isOpen
+        ? "opacity-100 pointer-events-auto"
+        : "opacity-0 pointer-events-none"
+    }
+  `}
     >
       <div
         className={`
-          bg-[#2a2d38] p-6 sm:p-8 rounded-lg w-full max-w-lg relative
-          transition-transform duration-300
-          leading-relaxed
-          ${isOpen ? "scale-100" : "scale-95"}
-        `}
+      bg-[#2a2d38] p-6 sm:p-8 rounded-lg w-full max-w-lg relative
+      transition-transform duration-300 leading-relaxed
+      overflow-y-auto max-h-screen scrollbar-hide
+      ${isOpen ? "scale-100" : "scale-95"}
+    `}
       >
         {/* Close Button */}
         <button
@@ -66,15 +66,15 @@ const ProjectModal = ({
               {project.title}
             </h3>
 
-            <div className="max-h-64 overflow-y-auto pr-3 mb-4 text-gray-200">
-              {/* Force wrapping for the description */}
+            <div className="mb-4 text-gray-200">
               <p className="text-base whitespace-pre-wrap break-all">
                 {project.description}
               </p>
             </div>
 
             <p className="text-base text-gray-200 mb-2">
-              <span className="font-semibold">Status:</span> {project.status}
+              <span className="font-semibold">Status:</span>{" "}
+              {project.status == "IN_PROGRESS" ? "IN PROGRESS" : project.status}
             </p>
 
             {project.priority && (
@@ -144,8 +144,8 @@ const ProjectModal = ({
                     id="projectComment"
                     placeholder="Enter your comment..."
                     className="w-full p-2 bg-[#1c1e26] border border-gray-600 rounded
-                             text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
-                             transition-all duration-200 leading-relaxed"
+                          text-gray-200 focus:outline-none focus:ring-2 focus:ring-[#33ADA9]
+                          transition-all duration-200 leading-relaxed"
                     value={comment}
                     onChange={(e) => onCommentChange(e.target.value)}
                     disabled={
@@ -164,8 +164,8 @@ const ProjectModal = ({
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
                   className="bg-[#33ADA9] px-4 py-2 rounded text-white
-                             hover:bg-teal-600 transition-colors duration-200
-                             disabled:opacity-70 disabled:cursor-not-allowed"
+                        hover:bg-teal-600 transition-colors duration-200
+                        disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isAccepting ? "Accepting..." : "Accept"}
                 </button>
@@ -178,8 +178,8 @@ const ProjectModal = ({
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
                   className="bg-gray-700 px-4 py-2 rounded text-white
-                             hover:bg-gray-600 transition-colors duration-200
-                             disabled:opacity-70 disabled:cursor-not-allowed"
+                        hover:bg-gray-600 transition-colors duration-200
+                        disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isRejecting ? "Rejecting..." : "Reject"}
                 </button>
@@ -192,8 +192,8 @@ const ProjectModal = ({
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
                   className="bg-green-200 text-green-800 px-4 py-2 rounded
-                             hover:bg-blue-400 hover:text-white transition-colors duration-200
-                             disabled:opacity-70 disabled:cursor-not-allowed"
+                        hover:bg-blue-400 hover:text-white transition-colors duration-200
+                        disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isStarting ? "Starting..." : "Start"}
                 </button>
@@ -206,8 +206,8 @@ const ProjectModal = ({
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
                   className="bg-blue-400 px-4 py-2 rounded text-white
-                             hover:bg-green-400 transition-colors duration-200
-                             disabled:opacity-70 disabled:cursor-not-allowed"
+                        hover:bg-green-400 transition-colors duration-200
+                        disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isCompleting ? "Completing..." : "Complete"}
                 </button>
