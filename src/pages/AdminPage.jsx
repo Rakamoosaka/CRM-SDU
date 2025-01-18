@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import ProjectCard from "../components/ProjectCard";
 import ProjectModal from "../components/ProjectModal";
 import LogsModal from "../components/LogsModal";
 import Footer from "../components/Footer";
+import axios from "axios";
 
 const AdminPage = () => {
   const navigate = useNavigate();
+
+  /// Toggle state for "All Projects" and "My Projects"
+  const [viewMyProjects, setViewMyProjects] = useState(false);
 
   // Projects & Categories
   const [projects, setProjects] = useState([]);
@@ -69,26 +73,55 @@ const AdminPage = () => {
   };
 
   // ------------------- FETCH PROJECTS -------------------
+  // Store the current cancel token using useRef
+  const currentRequest = useRef(null);
   const fetchProjects = async () => {
     setLoadingProjects(true);
     setProjectsError("");
 
-    try {
-      const params = {
-        search: activeFilters.search || undefined,
-        status: activeFilters.status || undefined,
-        category__name: activeFilters.category || undefined,
-        priority: activeFilters.priority || undefined,
-        ordering: activeFilters.ordering || undefined,
-      };
+    // Cancel the previous request if it exists
+    if (currentRequest.current) {
+      currentRequest.current.cancel();
+    }
 
-      const response = await axiosInstance.get("/projects/", { params });
-      setProjects(response.data);
+    // Create a new cancel token for the current request
+    const cancelToken = axios.CancelToken.source();
+    currentRequest.current = cancelToken;
+
+    try {
+      const endpoint = viewMyProjects ? `/user/my_projects/` : "/projects/";
+
+      const params = viewMyProjects
+        ? {}
+        : {
+            search: activeFilters.search || undefined,
+            status: activeFilters.status || undefined,
+            category__name: activeFilters.category || undefined,
+            priority: activeFilters.priority || undefined,
+            ordering: activeFilters.ordering || undefined,
+          };
+
+      const response = await axiosInstance.get(endpoint, {
+        params,
+        cancelToken: cancelToken.token, // Attach the cancel token
+      });
+
+      setProjects(response.data.projects || response.data);
     } catch (error) {
-      console.error("Failed to fetch projects:", error);
-      setProjectsError("Failed to load projects. Please try again later.");
+      if (axios.isCancel(error)) {
+        // Request was cancelled, do nothing
+        console.log("Request cancelled:", error.message);
+      } else {
+        console.error("Failed to fetch projects:", error);
+        setProjectsError("Failed to load projects. Please try again later.");
+      }
     } finally {
       setLoadingProjects(false);
+
+      // Clear the current request
+      if (currentRequest.current === cancelToken) {
+        currentRequest.current = null;
+      }
     }
   };
 
@@ -192,7 +225,7 @@ const AdminPage = () => {
   useEffect(() => {
     fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeFilters]);
+  }, [activeFilters, viewMyProjects]);
 
   // ------------------- FILTERS -------------------
   const handleFilterChange = (e) => {
@@ -371,7 +404,28 @@ const AdminPage = () => {
       {/* Projects Section */}
       <section className="px-4 pb-6 flex flex-col items-center">
         <div className="w-full max-w-4xl bg-[#2a2d38] p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold mb-4 text-white">Projects</h2>
+          <div className="flex bg-[#3A3F51] rounded-full p-1 max-w-[40%] mb-4">
+            <button
+              onClick={() => setViewMyProjects(false)}
+              className={`flex-1 py-2 text-xl font-semibold rounded-full ${
+                viewMyProjects === false
+                  ? "bg-[#53596F] text-white"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              All Projects
+            </button>
+            <button
+              onClick={() => setViewMyProjects(true)}
+              className={`flex-1 py-2 text-xl font-semibold rounded-full ${
+                viewMyProjects === true
+                  ? "bg-[#53596F] text-white"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              My Projects
+            </button>
+          </div>
           {loadingProjects ? (
             <p className="text-gray-300">Loading projects...</p>
           ) : projectsError ? (
