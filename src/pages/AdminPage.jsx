@@ -383,7 +383,7 @@ const AdminPage = () => {
       {/* Projects Section */}
       <section className="px-4 pb-6 flex flex-col items-center">
         <div className="w-full max-w-4xl bg-[#2a2d38] p-6 rounded-lg shadow-md">
-          <div className="relative flex bg-[#3A3F51] rounded-full p-1 max-w-[40%] mb-4">
+          <div className="relative flex bg-[#3A3F51] rounded-full p-1 max-w-[90%] sm:max-w-[60%] md:max-w-[40%] mb-4 mx-auto md:mx-0">
             {/* Slider */}
             <div
               className={`absolute top-0 left-0 h-full w-1/2 bg-[#53596F] rounded-full transition-transform duration-200 ease-in-out ${
@@ -394,13 +394,13 @@ const AdminPage = () => {
             {/* Buttons */}
             <button
               onClick={() => setViewMyProjects(false)}
-              className="flex-1 py-2 text-xl font-semibold text-white z-10"
+              className="flex-1 py-2 text-base sm:text-lg md:text-xl font-semibold text-white z-10"
             >
               All Projects
             </button>
             <button
               onClick={() => setViewMyProjects(true)}
-              className="flex-1 py-2 text-xl font-semibold text-white z-10"
+              className="flex-1 py-2 text-base sm:text-lg md:text-xl font-semibold text-white z-10"
             >
               My Projects
             </button>
