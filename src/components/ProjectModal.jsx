@@ -191,8 +191,8 @@ const ProjectModal = ({
                   disabled={
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
-                  className="bg-green-600 px-4 py-2 rounded text-white
-                             hover:bg-green-500 transition-colors duration-200
+                  className="bg-green-200 text-green-800 px-4 py-2 rounded
+                             hover:bg-blue-400 hover:text-white transition-colors duration-200
                              disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isStarting ? "Starting..." : "Start"}
@@ -205,8 +205,8 @@ const ProjectModal = ({
                   disabled={
                     isAccepting || isRejecting || isStarting || isCompleting
                   }
-                  className="bg-blue-600 px-4 py-2 rounded text-white
-                             hover:bg-blue-500 transition-colors duration-200
+                  className="bg-blue-400 px-4 py-2 rounded text-white
+                             hover:bg-green-400 transition-colors duration-200
                              disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isCompleting ? "Completing..." : "Complete"}
