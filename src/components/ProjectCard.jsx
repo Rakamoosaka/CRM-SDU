@@ -39,8 +39,8 @@ const ProjectCard = ({ project, onClick }) => {
           absolute
           -top-0.5
           -left-0.5
-          px-2
-          py-1
+          px-2.5
+          py-1.5
           text-sm
           font-semibold
           rounded

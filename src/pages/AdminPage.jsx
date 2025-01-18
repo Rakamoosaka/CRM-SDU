@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import ProjectCard from "../components/ProjectCard";
 import ProjectModal from "../components/ProjectModal";
 import LogsModal from "../components/LogsModal";
 import Footer from "../components/Footer";
-import axios from "axios";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -73,55 +72,43 @@ const AdminPage = () => {
   };
 
   // ------------------- FETCH PROJECTS -------------------
-  // Store the current cancel token using useRef
-  const currentRequest = useRef(null);
+  // ------------------- FETCH PROJECTS -------------------
   const fetchProjects = async () => {
     setLoadingProjects(true);
     setProjectsError("");
-
-    // Cancel the previous request if it exists
-    if (currentRequest.current) {
-      currentRequest.current.cancel();
-    }
-
-    // Create a new cancel token for the current request
-    const cancelToken = axios.CancelToken.source();
-    currentRequest.current = cancelToken;
 
     try {
       const endpoint = viewMyProjects ? `/user/my_projects/` : "/projects/";
 
       const params = viewMyProjects
-        ? {}
+        ? {
+            status: activeFilters.status || undefined,
+            category: activeFilters.category || undefined,
+            priority: activeFilters.priority || undefined,
+          }
         : {
             search: activeFilters.search || undefined,
             status: activeFilters.status || undefined,
-            category__name: activeFilters.category || undefined,
+            category__name__icontains: activeFilters.category || undefined,
             priority: activeFilters.priority || undefined,
             ordering: activeFilters.ordering || undefined,
           };
-
-      const response = await axiosInstance.get(endpoint, {
-        params,
-        cancelToken: cancelToken.token, // Attach the cancel token
-      });
-
-      setProjects(response.data.projects || response.data);
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        // Request was cancelled, do nothing
-        console.log("Request cancelled:", error.message);
+      console.log(params);
+      if (viewMyProjects) {
+        const queryString = new URLSearchParams(params).toString();
+        const response = await axiosInstance.get(`${endpoint}?${queryString}`);
+        setProjects(response.data.projects || response.data);
+        console.log(projects);
       } else {
-        console.error("Failed to fetch projects:", error);
-        setProjectsError("Failed to load projects. Please try again later.");
+        const response = await axiosInstance.get(endpoint, { params });
+        setProjects(response.data.projects || response.data);
+        console.log(projects);
       }
+    } catch (error) {
+      console.error("Failed to fetch projects:", error);
+      setProjectsError("Failed to load projects. Please try again later.");
     } finally {
       setLoadingProjects(false);
-
-      // Clear the current request
-      if (currentRequest.current === cancelToken) {
-        currentRequest.current = null;
-      }
     }
   };
 
