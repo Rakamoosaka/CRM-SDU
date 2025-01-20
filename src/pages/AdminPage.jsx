@@ -5,6 +5,13 @@ import ProjectCard from "../components/ProjectCard";
 import ProjectModal from "../components/ProjectModal";
 import LogsModal from "../components/LogsModal";
 import Footer from "../components/Footer";
+import { Toaster, toast } from "sonner";
+import {
+  NotifyAccepted,
+  NotifyRejected,
+  NotifyStarted,
+  NotifyCompleted,
+} from "../components/Toasts";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -72,7 +79,6 @@ const AdminPage = () => {
   };
 
   // ------------------- FETCH PROJECTS -------------------
-  // ------------------- FETCH PROJECTS -------------------
   const fetchProjects = async () => {
     setLoadingProjects(true);
     setProjectsError("");
@@ -87,11 +93,9 @@ const AdminPage = () => {
         priority: activeFilters.priority || undefined,
         ordering: activeFilters.ordering || undefined,
       };
-      console.log(params);
 
       const response = await axiosInstance.get(endpoint, { params });
       setProjects(response.data.projects || response.data);
-      console.log(projects);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
       setProjectsError("Failed to load projects. Please try again later.");
@@ -108,11 +112,12 @@ const AdminPage = () => {
       await axiosInstance.post(`/projects/${selectedProject.id}/accept/`, {
         comment_text: comment,
       });
+      NotifyAccepted();
       fetchProjects();
       setSelectedProject(null);
     } catch (error) {
       console.error("Failed to accept project:", error);
-      alert("Failed to accept project. Please try again.");
+      toast.error("Failed to accept project. Please try again."); // <--- ADD TOAST
     } finally {
       setActionLoading(null);
     }
@@ -126,11 +131,12 @@ const AdminPage = () => {
       await axiosInstance.post(`/projects/${selectedProject.id}/reject/`, {
         comment_text: comment,
       });
+      NotifyRejected();
       fetchProjects();
       setSelectedProject(null);
     } catch (error) {
       console.error("Failed to reject project:", error);
-      alert("Failed to reject project. Please try again.");
+      toast.error("Failed to reject project. Please try again."); // <--- ADD TOAST
     } finally {
       setActionLoading(null);
     }
@@ -144,11 +150,12 @@ const AdminPage = () => {
       await axiosInstance.post(`/projects/${selectedProject.id}/start/`, {
         comment_text: comment,
       });
+      NotifyStarted();
       fetchProjects();
       setSelectedProject(null);
     } catch (error) {
       console.error("Failed to start project:", error);
-      alert("Failed to start project. Please try again.");
+      toast.error("Failed to start project. Please try again."); // <--- ADD TOAST
     } finally {
       setActionLoading(null);
     }
@@ -162,11 +169,12 @@ const AdminPage = () => {
       await axiosInstance.post(`/projects/${selectedProject.id}/completed/`, {
         comment_text: comment,
       });
+      NotifyCompleted();
       fetchProjects();
       setSelectedProject(null);
     } catch (error) {
       console.error("Failed to complete project:", error);
-      alert("Failed to complete project. Please try again.");
+      toast.error("Failed to complete project. Please try again."); // <--- ADD TOAST
     } finally {
       setActionLoading(null);
     }
@@ -232,6 +240,9 @@ const AdminPage = () => {
   // ------------------- RENDER -------------------
   return (
     <div className="bg-[#1c1e26] min-h-screen text-white px-4 py-6 leading-relaxed">
+      {/* 2. Place the Toaster at the root level of the page (lower-left corner) */}
+      <Toaster position="bottom-right" />
+
       {/* Header */}
       <header className="bg-[#2a2d38] py-4 px-6 sm:px-10 flex justify-between items-center rounded-lg shadow-md">
         <Link to="/">
